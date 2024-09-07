@@ -1,0 +1,24 @@
+<div class="settings">
+  <h1>Настройки пользователя</h1>
+  <div class="text-left m-t-20">
+    <label for="id">Никнейм: </label>
+    <input id="id" placeholder="введите никнейм" [(ngModel)]="username"/>
+  </div>
+  <div class="text-left m-t-20">
+
+<!--    <input type="file" class="file-upload" name="avatarUrl" (change)="onFileSelected($event)" onchange="console.log(event.target.files)">-->
+
+
+    <div class="file-upload">
+      <label for="id">Аватар:&nbsp;</label>
+      <input type="file" class="file-input"
+             (change)="onFileSelected($event)" #fileUpload>
+      <button color="primary" class="upload-btn"
+              (click)="fileUpload.click()">Загрузить аватар
+      </button>
+      <div>{{fileName || ""}}</div>
+    </div>
+  </div>
+
+  <div class="text-center m-t-20"><button (click)="save()">Сохранить</button></div>
+</div>
