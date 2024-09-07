@@ -21,8 +21,8 @@ export default class RegisterPageComponent {
 
     register() {
         this.auth.register(this.username, this.password)
-            .subscribe(() => {
-                this.router.navigateByUrl('/settings');
+            .then(() => {
+                this.router.navigateByUrl('/main');
             });
     }
 }

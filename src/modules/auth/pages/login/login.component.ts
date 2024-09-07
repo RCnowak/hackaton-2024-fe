@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { NAKAMA } from '@api/nakama';
 
 @Component({
     templateUrl: './login.component.html',
@@ -21,8 +22,8 @@ export default class LoginPageComponent {
 
     login() {
         this.auth.login(this.username, this.password)
-            .subscribe(() => {
-                this.router.navigateByUrl('/settings');
+            .then(() => {
+                this.router.navigateByUrl('/main');
             });
     }
 }

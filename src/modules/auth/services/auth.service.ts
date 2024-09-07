@@ -1,44 +1,29 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { TokenObj, TokenService } from './token.service';
 import { tap } from 'rxjs';
+
+import { NAKAMA } from '@api/nakama';
+import { TokenObj, SessionService } from './session.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-    private http = inject(HttpClient);
-    private token = inject(TokenService);
+    private session = inject(SessionService);
+    private nakama = inject(NAKAMA);
 
     login(email: string, password: string) {
-        return this.http.post<TokenObj>('/v2/account/authenticate/email', {
-            email,
-            password
-        }, {
-            headers: {
-                "Authorization": "Basic " + btoa('defaultkey' + ":" + '')
-            }
-        })
-            .pipe(tap(res => this.token.setToken(res)));
+        return this.nakama.authenticateEmail(email, password)
+            .then(res => this.session.setToken(res));
     }
 
     register(email: string, password: string) {
-        return this.http.post<TokenObj>('/v2/account/authenticate/email', {
-            email,
-            password
-        }, {
-            headers: {
-                "Authorization": "Basic " + btoa('defaultkey' + ":" + '')
-            }
-        })
-            .pipe(tap(res => this.token.setToken(res)));
+        return this.nakama.authenticateEmail(email, password, true)
+            .then(res => this.session.setToken(res));
     }
 
     logout() {
-        return this.http.post('/v2/session/logout', {
-            token: this.token.token,
-            refreshToken: this.token.refresh_token
-        })
-            .pipe(tap(() => this.token.clearToken()));
+        return this.nakama.sessionLogout(this.session.session!, this.session.session!.token, this.session.session!.refresh_token)
+            .then(res => this.session.clearToken());
     }
 }

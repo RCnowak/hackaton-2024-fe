@@ -16,6 +16,6 @@ export default class InAppShellComponent {
 
     logout() {
         this.auth.logout()
-            .subscribe(() => this.router.navigateByUrl('/login'));
+            .then(() => this.router.navigateByUrl('/login'));
     }
 }
