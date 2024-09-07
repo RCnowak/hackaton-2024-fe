@@ -69,6 +69,11 @@ button {
     padding: 24px 32px;
     font-size: 24px;
 
+    &.small {
+        padding: 16px 24px;
+        font-size: 16px;
+    }
+
     &.success {
         background: lightgreen;
         &:hover:not(:disabled) {

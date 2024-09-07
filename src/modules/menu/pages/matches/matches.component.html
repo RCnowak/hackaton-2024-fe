@@ -1,7 +1,14 @@
-<h1>ololo</h1>
-<table  cdk-table class="table table-striped" mat-table [dataSource]="matches">
-  <ng-container matColumnDef="match_id">
-    <th mat-header-cell *matHeaderCellDef> matchID </th>
-    <td mat-cell *matCellDef="let element"> {{element.match_id}} </td>
-  </ng-container>
+<table class="table">
+    <thead>
+        <th>MatchID</th>
+        <th></th>
+    </thead>
+    <tbody>
+        @for (match of matches; track match.match_id) {
+            <tr>
+                <td>{{ match.match_id }} {{ match.size}}/4</td>
+                <td><button class="small" (click)="join(match.match_id)">Join</button></td>
+            </tr>
+        }
+    </tbody>
 </table>

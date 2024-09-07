@@ -20,18 +20,26 @@ type PlayerStatusChange = {
 })
 export default class LobbyPageComponent {
     private router = inject(Router);
-    private user: User = inject(ActivatedRoute).snapshot.parent?.data['user'].user;
+    private route = inject(ActivatedRoute).snapshot;
+    private user: User = this.route.parent?.data['user'].user;
     private socket = inject(SocketService);
     private match: Match | null = null;
     users: string[] = [];
     players: Player[] = []
 
-    isHost: boolean = true;
+    isHost: boolean = this.route.queryParams['match_id'];
     currentStatus: PlayerStatus = 'notready';
     private statuses: PlayerStatusChange[] = [];
 
     ngOnInit() {
-        this.createMatch();
+        const match_id =  this.route.queryParams['match_id'];
+        this.isHost = !match_id;
+
+        if (this.isHost) {
+            this.createMatch();
+        } else {
+            this.joinMatch(match_id)
+        }
 
         this.socket.socket!.onmatchpresence = matchpresence => {
             matchpresence.joins.forEach(presence => {
@@ -55,9 +63,19 @@ export default class LobbyPageComponent {
         };
     }
 
-    async createMatch() {
+    private async createMatch() {
         this.match = await this.socket.create()
+            // .then(socket => socket.rpc(this.user.username!));
             .then(socket => socket.createMatch(this.user.username!));
+    }
+
+    private async joinMatch(match_id: string) {
+        this.match = await this.socket.socket!.joinMatch(match_id);
+        console.log(this.match)
+    }
+
+    private addPlayers() {
+        
     }
 
     start() {
