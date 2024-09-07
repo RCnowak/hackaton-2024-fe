@@ -1,0 +1,16 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  row-gap: 50px;
+}
+
+#canvas {
+  width: 100vw;
+  height: 100vh;
+}
+
+.buttons {
+  position: fixed;
+  bottom: 50px;
+  right: 0;
+}
