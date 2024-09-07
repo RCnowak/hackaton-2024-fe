@@ -97,5 +97,11 @@ export class SocketService {
 export enum OpCode {
     ReadyStatusRequest = 1,
     ReadyStatus = 2,
-    ReadyStatusChange = 3
+    ReadyStatusChange = 3,
+    GameStart = 4,
+    SceneReady = 5,
+    GameEvent = 6,
+    GamePause = 7,
+    GameResume = 8,
+    End = 9
 }
