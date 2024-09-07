@@ -1,9 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { NAKAMA } from '@api/nakama';
+
+import { AuthService } from '../../services/auth.service';
 
 @Component({
     templateUrl: './login.component.html',
@@ -17,11 +16,11 @@ import { NAKAMA } from '@api/nakama';
 export default class LoginPageComponent {
     private auth = inject(AuthService);
     private router = inject(Router);
-    username: string = '';
+    email: string = '';
     password: string = '';
 
     login() {
-        this.auth.login(this.username, this.password)
+        this.auth.login(this.email, this.password)
             .then(() => {
                 this.router.navigateByUrl('/main');
             });
