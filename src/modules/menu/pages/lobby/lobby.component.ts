@@ -1,18 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SocketService } from '@game/services/socket.service';
-import { Match, User } from '@heroiclabs/nakama-js';
-
-type PlayerStatus = 'ready' | 'notready';
-type Player = {
-    username: string;
-    id: string;
-    status: PlayerStatus;
-}
-type PlayerStatusChange = {
-    user_id: string;
-    status: PlayerStatus;
-}
+import { Player, PlayerStatus, PlayerStatusChange } from '@game/models/types';
+import { OpCode, SocketService } from '@game/services/socket.service';
+import { Match, MatchPresenceEvent, User } from '@heroiclabs/nakama-js';
+import { merge } from 'rxjs';
 
 @Component({
     templateUrl: './lobby.component.html',
@@ -23,7 +14,6 @@ export default class LobbyPageComponent {
     private route = inject(ActivatedRoute).snapshot;
     private user: User = this.route.parent?.data['user'].user;
     private socket = inject(SocketService);
-    private match: Match | null = null;
     users: string[] = [];
     players: Player[] = []
 
@@ -31,51 +21,49 @@ export default class LobbyPageComponent {
     currentStatus: PlayerStatus = 'notready';
     private statuses: PlayerStatusChange[] = [];
 
-    ngOnInit() {
+    async ngOnInit() {
         const match_id =  this.route.queryParams['match_id'];
         this.isHost = !match_id;
 
         if (this.isHost) {
-            this.createMatch();
+            await this.createMatch();
+            this.socket.subscribeOn(OpCode.ReadyStatusRequest)
+                .subscribe(() => this.socket.sendMatchData(OpCode.ReadyStatus, this.players))
         } else {
-            this.joinMatch(match_id)
+            await this.joinMatch(match_id)
         }
 
         this.socket.socket!.onmatchpresence = matchpresence => {
-            matchpresence.joins.forEach(presence => {
-                this.players.push({
-                    username: presence.username,
-                    id: presence.user_id,
-                    status: 'notready'
-                })
-            });
+            this.addPlayers(matchpresence.joins || []);
             matchpresence.leaves?.forEach(presence => {
                 this.players.filter(player => player.id !== presence.user_id);
             });
-            this.updateStatuses();
-            console.log(matchpresence)
         };
 
-        this.socket.socket!.onstatuspresence = statuspresence => {
-            this.statuses = statuspresence.joins as any as PlayerStatusChange[];
-            this.updateStatuses();
-            console.log(this.statuses)
-        };
+        merge(
+            this.socket.subscribeOn(OpCode.ReadyStatus),
+            this.socket.subscribeOn(OpCode.ReadyStatusChange),
+        )
+            .subscribe(console.log);
     }
 
     private async createMatch() {
-        this.match = await this.socket.create()
-            // .then(socket => socket.rpc(this.user.username!));
-            .then(socket => socket.createMatch(this.user.username!));
+        await this.socket.createMatch(this.user.username!);
     }
 
     private async joinMatch(match_id: string) {
-        this.match = await this.socket.socket!.joinMatch(match_id);
-        console.log(this.match)
+        await this.socket.joinMatch(match_id);
+        this.addPlayers(this.socket.match!.presences);
     }
 
-    private addPlayers() {
-        
+    private addPlayers(matchpresence: MatchPresenceEvent['joins']) {
+        matchpresence.forEach(presence => {
+            this.players.push({
+                username: presence.username,
+                id: presence.user_id,
+                status: 'notready'
+            });
+        });
     }
 
     start() {
@@ -83,19 +71,14 @@ export default class LobbyPageComponent {
     }
 
     leave() {
-        this.socket.socket?.leaveMatch(this.match!.match_id)
+        this.socket.leaveMatch()
             .then(() => this.router.navigateByUrl('/main'));
     }
 
-    ready() {
-        this.changeStatus('ready');
-    }
-    notready() {
-        this.changeStatus('notready');
-    }
-
-    private changeStatus(status: PlayerStatus) {
-        this.socket.socket?.updateStatus(status);
+    markAs(status: PlayerStatus) {
+        this.socket.changeReadyStatus(status);
+        this.currentStatus = status;
+        this.players.find(s => s.id === this.user.id)!.status = status;
     }
 
     private updateStatuses() {
