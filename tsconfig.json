@@ -24,7 +24,10 @@
       "dom"
     ],
     "paths": {
-      "@api/*": ["./src/api/*"]
+      "@api/*": ["./src/api/*"],
+      "@auth/*": ["./src/modules/auth/*"],
+      "@game/*": ["./src/modules/game/*"],
+      "@menu/*": ["./src/modules/menu/*"],
     }
   },
   "angularCompilerOptions": {

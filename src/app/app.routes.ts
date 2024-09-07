@@ -6,6 +6,8 @@ import { isAuthorised } from '../modules/auth/guards/is-authorized.guard';
 import { isNotAuthorised } from '../modules/auth/guards/is-not-authorised.guard';
 import InAppShellComponent from './shells/in-app-shell/in-app-shell.component';
 import MenuPageComponent from '../modules/menu/pages/main/main.component';
+import LobbyPageComponent from '../modules/menu/pages/lobby/lobby.component';
+import MatchesPageComponent from '@menu/pages/matches/matches.component';
 
 export const routes: Routes = [
     {
@@ -43,6 +45,14 @@ export const routes: Routes = [
             {
                 path: 'settings',
                 component: SettingsPageComponent
+            },
+            {
+                path: 'lobby',
+                component: LobbyPageComponent
+            },
+            {
+                path: 'matches',
+                component: MatchesPageComponent
             },
         ]
     },
