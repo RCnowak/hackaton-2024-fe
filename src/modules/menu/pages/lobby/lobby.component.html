@@ -13,7 +13,5 @@
     @if (currentStatus === 'ready') {
         <button (click)="markAs('notready')">I am not ready</button>
     }
-    @if (isHost) {
-        <button (click)="leave()">Leave game</button>
-    }
+    <button (click)="leave()">Leave game</button>
 </div>

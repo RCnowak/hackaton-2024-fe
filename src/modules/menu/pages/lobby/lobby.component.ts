@@ -19,7 +19,6 @@ export default class LobbyPageComponent {
 
     isHost: boolean = this.route.queryParams['match_id'];
     currentStatus: PlayerStatus = 'notready';
-    private statuses: PlayerStatusChange[] = [];
 
     async ngOnInit() {
         const match_id =  this.route.queryParams['match_id'];
@@ -27,8 +26,6 @@ export default class LobbyPageComponent {
 
         if (this.isHost) {
             await this.createMatch();
-            this.socket.subscribeOn(OpCode.ReadyStatusRequest)
-                .subscribe(() => this.socket.sendMatchData(OpCode.ReadyStatus, this.players))
         } else {
             await this.joinMatch(match_id)
         }
@@ -36,7 +33,7 @@ export default class LobbyPageComponent {
         this.socket.socket!.onmatchpresence = matchpresence => {
             this.addPlayers(matchpresence.joins || []);
             matchpresence.leaves?.forEach(presence => {
-                this.players.filter(player => player.id !== presence.user_id);
+                this.players = this.players.filter(player => player.id !== presence.user_id);
             });
         };
 
@@ -44,11 +41,20 @@ export default class LobbyPageComponent {
             this.socket.subscribeOn(OpCode.ReadyStatus),
             this.socket.subscribeOn(OpCode.ReadyStatusChange),
         )
-            .subscribe(console.log);
+            .subscribe((matchData: any) => {
+                console.log(matchData)
+                const players = matchData.data as Player[];
+                console.log(players)
+                players.forEach(p => this.players.find(_p => p.id === _p.id)!.status = p.status);
+            });
     }
 
     private async createMatch() {
         await this.socket.createMatch(this.user.username!);
+        this.socket.subscribeOn(OpCode.ReadyStatusRequest)
+                .subscribe(() => {
+                    this.socket.sendMatchData(OpCode.ReadyStatus, this.players);
+                })
     }
 
     private async joinMatch(match_id: string) {
@@ -76,21 +82,8 @@ export default class LobbyPageComponent {
     }
 
     markAs(status: PlayerStatus) {
-        this.socket.changeReadyStatus(status);
+        this.socket.changeReadyStatus(status, this.user);
         this.currentStatus = status;
         this.players.find(s => s.id === this.user.id)!.status = status;
-    }
-
-    private updateStatuses() {
-        this.statuses.forEach(status => {
-            const player = this.players.find(p => p.id === status.user_id);
-            const _status = status.status || 'notready';
-            if (player) {
-                player.status = _status;
-            }
-            if (status.user_id === this.user.id) {
-                this.currentStatus = _status;
-            }
-        })
     }
 }
