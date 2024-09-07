@@ -25,17 +25,5 @@ export class SceneObject implements ISceneObject {
       this.position.y * this.size.height,
       this.size.width,
       this.size.height);
-
-    context.fillText(`${ JSON.stringify(this.position) }`,
-      (this.position.x * BLOCK_SIZE) + 30,
-      (this.position.y * BLOCK_SIZE) + 30,
-    );
-
-    context.strokeRect(
-      (this.position.x * BLOCK_SIZE),
-      (this.position.y * BLOCK_SIZE),
-      this.size.width,
-      this.size.height);
   }
-
 }

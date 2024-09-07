@@ -1,16 +1,13 @@
-import { IPoint, ISize } from "../../../utils";
+import { IPoint, ISize, LevelEnum } from "../../../utils";
 import { SceneObject } from "../../base/scene-object";
 
 export class Ladder extends SceneObject {
   public override size: ISize = { width: 128, height: 128 };
 
-  constructor(id: string, position: IPoint) {
-
+  constructor(id: string, position: IPoint, value: LevelEnum) {
     super(id, position);
     this.position = position;
-    this.sprite.src = `/assets/images/wall.png`;
-    this._shiftFrame.x = 8;
+    this.sprite.src = `/images/wall.png`;
+    this._shiftFrame.x = value;
   }
-
-
 }

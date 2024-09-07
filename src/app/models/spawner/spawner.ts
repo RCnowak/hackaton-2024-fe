@@ -7,7 +7,7 @@ export class Spawner extends SceneObject {
   constructor(id: string, position: IPoint) {
     super(id, position);
     this.position = position;
-    this.sprite.src = `/assets/images/spawner.png`;
+    this.sprite.src = `/images/spawner.png`;
   }
 
   public bornNewEnemy(): boolean {

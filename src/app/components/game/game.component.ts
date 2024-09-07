@@ -12,8 +12,8 @@ import { v4 as uuidv4 } from "uuid";
 
 @Component({
   selector: "app-root",
-  templateUrl: "./app.component.html",
-  styleUrls: [ "./app.component.scss" ],
+  templateUrl: "./game.component.html",
+  styleUrls: [ "./game.component.scss" ],
   providers: [
     DestroyService,
     SocketService,
@@ -60,7 +60,8 @@ import { v4 as uuidv4 } from "uuid";
         return context;
       },
     },
-  ]
+  ],
+  standalone: true
 })
 
 export class GameComponent {

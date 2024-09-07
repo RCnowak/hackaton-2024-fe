@@ -59,7 +59,9 @@ export class Scene extends BaseModel {
             stoneID++;
             break;
           case LevelEnum.LADDER:
-            this._sceneObjects.set(uid, new Ladder(uid, position));
+          case LevelEnum.LADDER_LEFT:
+          case LevelEnum.LADDER_RIGHT:
+            this._sceneObjects.set(uid, new Ladder(uid, position, value));
             break;
           case LevelEnum.SPAWNER:
             this._sceneObjects.set(uid, new Spawner(uid, position));

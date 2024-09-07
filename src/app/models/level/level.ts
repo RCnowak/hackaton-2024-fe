@@ -58,8 +58,12 @@ export class Level {
             this.setMapObject(map, position, LevelEnum.WALL_EAST);
           } else if (position.x === room.position.x + room.size.width - 1) {
             this.setMapObject(map, position, LevelEnum.WALL_WEST);
+          } else if (position.y === room.position.y + room.size.height - 1 && position.x === centerX - 1) {
+            this.setMapObject(map, position, LevelEnum.LADDER_LEFT);
           } else if (position.y === room.position.y + room.size.height - 1 && position.x === centerX) {
             this.setMapObject(map, position, LevelEnum.LADDER);
+          } else if (position.y === room.position.y + room.size.height - 1 && position.x === centerX + 1) {
+            this.setMapObject(map, position, LevelEnum.LADDER_RIGHT);
           } else if (position.y === room.position.y + room.size.height - 1) {
             this.setMapObject(map, position, LevelEnum.WALL_SOUTH);
           } else if (position.x === centerX && position.y === centerY) {
@@ -77,7 +81,6 @@ export class Level {
       const stone = this.getEmptyPosition(map);
       this.setMapObject(map, stone, LevelEnum.STONES);
     }
-
     return map;
   }
 

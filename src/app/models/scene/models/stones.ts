@@ -8,7 +8,7 @@ export class Stones extends SceneObject {
     super(id, position);
     this.position = position;
     this.stoneId = stoneId;
-    this.sprite.src = `/assets/images/stones.png`;
+    this.sprite.src = `/images/stones.png`;
   }
 
   public override render(context?: CanvasRenderingContext2D): void {

@@ -83,7 +83,7 @@ export class Player extends BaseModel implements ISceneObject {
     super(injector, id);
     this.position = position;
     this._level = level;
-    this.sprite.src = `/assets/images/archer.png`;
+    this.sprite.src = `/images/archer.png`;
   }
 
   public override update(deltaTime: number): void {
@@ -109,18 +109,6 @@ export class Player extends BaseModel implements ISceneObject {
       this.offset.y + (this.position.y * BLOCK_SIZE),
       this.size.width,
       this.size.height);
-
-    this.context.strokeRect(
-      this.offset.x + (this.position.x * BLOCK_SIZE),
-      this.offset.y + (this.position.y * BLOCK_SIZE),
-      this.size.width,
-      this.size.height);
-
-    this.context.fillText(`${ JSON.stringify(this.text) }, ${ JSON.stringify(this.text) }`,
-      this.offset.x + (this.position.x * BLOCK_SIZE),
-      this.offset.y + (this.position.y * BLOCK_SIZE),
-    );
-
   }
 
   private shiftX(): number {

@@ -5,6 +5,6 @@ export class Ground extends SceneObject {
   constructor(id: string, position: IPoint) {
     super(id, position);
     this.position = position;
-    this.sprite.src = `/assets/images/ground.png`;
+    this.sprite.src = `/images/ground.png`;
   }
 }

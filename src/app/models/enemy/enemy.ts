@@ -15,6 +15,23 @@ import { Player } from "../player/player";
 import { BaseModel } from "../base/base-model";
 import { Injector } from "@angular/core";
 
+const enemies = [
+  "big spider.png",
+  "brown werewolf.png",
+  "brown werewolf in various.png",
+  "fire ant.png",
+  "goblin bow.png",
+  "goblin elite.png",
+  "goblin peak.png",
+  "orc sword shield.png",
+  "orc with an ax.png",
+  "skeleton.png",
+  "small spider.png",
+  "white werewolf.png",
+  "white werewolf in various.png",
+  // "wyvern.png"
+];
+
 export class Enemy extends BaseModel implements ISceneObject {
   public override size: ISize = { width: 128, height: 128 };
 
@@ -31,7 +48,9 @@ export class Enemy extends BaseModel implements ISceneObject {
     super(injector, id);
     this.position = { ...position };
     this._target = target;
-    this.sprite.src = `/assets/images/goblin_.png`;
+    const model = Math.floor(Math.random() * enemies.length);
+
+    this.sprite.src = `/images/enemies/${ enemies[model] }`;
     this._level = level;
     this._path = createPath(this, this._target, this._level);
   }

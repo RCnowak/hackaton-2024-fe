@@ -102,6 +102,8 @@ export const getNeighbors = (parent: INode, level: LevelEnum[][]): INode[] => {
 
 export const checkWall = (point: LevelEnum): boolean => {
   return (
+    point === LevelEnum.LADDER_LEFT ||
+    point === LevelEnum.LADDER_RIGHT ||
     point === LevelEnum.WALL_NORTH ||
     point === LevelEnum.WALL_WEST ||
     point === LevelEnum.WALL_EAST ||

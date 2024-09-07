@@ -18,7 +18,7 @@ export class Wall extends SceneObject {
   constructor(id: string, position: IPoint, direction: LevelEnum) {
     super(id, position);
     this.position = position;
-    this.sprite.src = `/assets/images/wall.png`;
+    this.sprite.src = `/images/wall.png`;
     this._shiftFrame.x = shiftWall.indexOf(direction);
   }
 }
