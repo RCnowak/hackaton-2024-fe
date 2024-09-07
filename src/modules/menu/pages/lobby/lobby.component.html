@@ -1,0 +1,19 @@
+<div class="players">
+    @for (player of players; track player.id) {
+        <p class="player" [class.ready]="player.status === 'ready'">{{ player.username }}</p>
+    }
+</div>
+<div class="buttons">
+    @if (isHost) {
+        <button (click)="start()">Start game</button>
+    }
+    @if (currentStatus === 'notready') {
+        <button (click)="ready()">I am ready</button>
+    }
+    @if (currentStatus === 'ready') {
+        <button (click)="notready()">I am not ready</button>
+    }
+    @if (isHost) {
+        <button (click)="leave()">Leave game</button>
+    }
+</div>

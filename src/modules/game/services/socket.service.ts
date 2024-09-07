@@ -9,7 +9,7 @@ import { Socket } from '@heroiclabs/nakama-js';
 export class SocketService {
     private nakama = inject(NAKAMA);
     private session = inject(SessionService).session;
-    private socket!: Socket | null;
+    socket!: Socket | null;
 
     async create() {
         this.socket = this.nakama.createSocket();

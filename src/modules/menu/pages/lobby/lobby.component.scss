@@ -1,0 +1,32 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    height: 100%;
+}
+
+.players {
+    display: flex;
+    flex-grow: 1;
+    height: 100%;
+    width: 550px;
+    flex-direction: column;
+
+    .player {
+        background-color: coral;
+        &.ready {
+            background-color: aquamarine;
+        }
+    }
+}
+
+.buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: space-between;
+
+    button {
+        padding: 16px 24px;
+        font-size: 16px;
+    }
+}
