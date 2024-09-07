@@ -1,13 +1,17 @@
 import { Routes } from '@angular/router';
-import LoginPageComponent from '../modules/auth/pages/login/login.component';
-import SettingsPageComponent from '../modules/menu/pages/settings/settings.component';
-import RegisterPageComponent from '../modules/auth/pages/register/register.component';
-import { isAuthorised } from '../modules/auth/guards/is-authorized.guard';
-import { isNotAuthorised } from '../modules/auth/guards/is-not-authorised.guard';
+
 import InAppShellComponent from './shells/in-app-shell/in-app-shell.component';
-import MenuPageComponent from '../modules/menu/pages/main/main.component';
-import LobbyPageComponent from '../modules/menu/pages/lobby/lobby.component';
+
+import LoginPageComponent from '@auth/pages/login/login.component';
+import SettingsPageComponent from '@menu/pages/settings/settings.component';
+import RegisterPageComponent from '@auth/pages/register/register.component';
+import { isAuthorised } from '@auth/guards/is-authorized.guard';
+import { isNotAuthorised } from '@auth/guards/is-not-authorised.guard';
+
+import MenuPageComponent from '@menu/pages/main/main.component';
+import LobbyPageComponent from '@menu/pages/lobby/lobby.component';
 import MatchesPageComponent from '@menu/pages/matches/matches.component';
+import { userResolver } from '@menu/services/user.resolver';
 
 export const routes: Routes = [
     {
@@ -37,6 +41,9 @@ export const routes: Routes = [
         canActivateChild: [
             isAuthorised
         ],
+        resolve: {
+            user: userResolver
+        },
         children: [
             {
                 path: 'main',
