@@ -21,7 +21,9 @@ export default class SettingsPageComponent {
   private socket = inject(SocketService);
   private nakama = inject(NAKAMA);
   private session = inject(SessionService);
-  // constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  
+
   username: string = '';
 
   onFileSelected(event:any) {
@@ -33,13 +35,12 @@ export default class SettingsPageComponent {
 
       this.fileName = 'Выбран: '+file.name;
 
-      // const formData = new FormData();
-      //
-      // formData.append("thumbnail", file);
-      //
-      // const upload$ = this.http.post("/api/thumbnail-upload", formData);
-      //
-      // upload$.subscribe();
+      const formData = new FormData();
+      
+      formData.append("thumbnail", file);
+      
+      this.http.post("/api/thumbnail-upload", formData)
+        .subscribe(data => this.save());
     }
   }
   save() {
