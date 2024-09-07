@@ -1,0 +1,7 @@
+<h1>ololo</h1>
+<table  cdk-table class="table table-striped" mat-table [dataSource]="matches">
+  <ng-container matColumnDef="match_id">
+    <th mat-header-cell *matHeaderCellDef> matchID </th>
+    <td mat-cell *matCellDef="let element"> {{element.match_id}} </td>
+  </ng-container>
+</table>
