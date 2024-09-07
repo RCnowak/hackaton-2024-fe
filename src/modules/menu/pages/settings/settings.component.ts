@@ -1,10 +1,9 @@
 import {Component, inject} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {SocketService} from "@game/services/socket.service";
-import {NAKAMA} from "@api/nakama";
-import {Match} from "@heroiclabs/nakama-js";
-import {SessionService} from "@auth/services/session.service";
 import {FormsModule} from "@angular/forms";
+
+import {NAKAMA} from "@api/nakama";
+import {SessionService} from "@auth/services/session.service";
 
 
 @Component({
@@ -18,7 +17,6 @@ import {FormsModule} from "@angular/forms";
 })
 export default class SettingsPageComponent {
   fileName = '';
-  private socket = inject(SocketService);
   private nakama = inject(NAKAMA);
   private session = inject(SessionService);
   private http = inject(HttpClient);

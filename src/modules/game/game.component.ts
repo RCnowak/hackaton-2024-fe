@@ -1,12 +1,12 @@
 import { Component, inject, Injector } from "@angular/core";
-import { DestroyService } from "../../services/destroy.service";
-import { SocketService } from "../../services/socket.service";
-import { CANVAS, CONTEXT, DELTA_TIME, deltaTime, LevelEnum, SOCKET } from "../../utils";
+import { DestroyService } from "./services/destroy.service";
+import { SocketService } from "./services/socket.service";
+import { CANVAS, CONTEXT, DELTA_TIME, deltaTime, LevelEnum, SOCKET } from "./utils";
 import { Observable, takeUntil } from "rxjs";
 import { DOCUMENT } from "@angular/common";
-import { Game } from "../../models/game/game";
-import { Level } from "../../models/level/level";
-import { Scene } from "../../models/scene/scene";
+import { Game } from "./models/game/game";
+import { Level } from "./models/level/level";
+import { Scene } from "./models/scene/scene";
 import { v4 as uuidv4 } from "uuid";
 
 

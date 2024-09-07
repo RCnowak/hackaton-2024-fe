@@ -1,14 +1,35 @@
 import { inject, Injectable } from '@angular/core';
+import { Match, MatchData, Socket, User } from '@heroiclabs/nakama-js';
+import { BehaviorSubject, filter, Observable, Subject } from 'rxjs';
+
 import { NAKAMA } from '@api/nakama';
 import { SessionService } from '@auth/services/session.service';
-import { Player, PlayerStatus } from '@game/models/types';
-import { Match, MatchData, Socket, User } from '@heroiclabs/nakama-js';
-import { filter, Observable, Subject } from 'rxjs';
+import { IMessage } from '@game/utils';
+
+export type PlayerStatus = 'ready' | 'notready';
+export type Player = {
+    username: string;
+    id: string;
+    status: PlayerStatus;
+}
 
 @Injectable({
     providedIn: 'root'
 })
 export class SocketService {
+    private message$$: BehaviorSubject<IMessage> = new BehaviorSubject<IMessage>({
+        action: "init",
+        payload: null
+    });
+
+    public message$: Observable<IMessage> = this.message$$.asObservable();
+
+    public on(message: IMessage): void {
+        this.message$$.next(message);
+    }
+
+
+
     private nakama = inject(NAKAMA);
     private session = inject(SessionService).session;
     socket!: Socket | null;
