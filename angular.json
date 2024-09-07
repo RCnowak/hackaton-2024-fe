@@ -70,6 +70,9 @@
               "buildTarget": "hackaton-2024-fe:build:development"
             }
           },
+          "options": {
+            "proxyConfig": "proxy.config.js"
+          },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
@@ -98,5 +101,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

@@ -1,0 +1,14 @@
+:host {
+    justify-content: center;
+    height: 100%;
+}
+
+:host, .login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login {
+    gap: 24px;
+}
