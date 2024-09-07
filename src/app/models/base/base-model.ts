@@ -8,14 +8,16 @@ export abstract class BaseModel {
   public sprite: HTMLImageElement = new Image();
   public position: IPoint = { x: 0, y: 0 };
   public direction: IPoint = { x: 0, y: 0 };
-  public size: ISize = { width: 0, height: 0 };
+  public imageSize: ISize = { width: 128, height: 128 };
+  public size: ISize = { width: 128, height: 128 };
+
 
   protected delta$!: Observable<number>;
   protected context!: CanvasRenderingContext2D;
   protected injector: Injector;
   protected canvas: HTMLCanvasElement;
   protected socket: SocketService;
-  protected _shiftFrame: IPoint = { x: 0, y: 0 };
+  protected shiftFrame: IPoint = { x: 0, y: 0 };
 
   protected constructor(injector: Injector, id: string) {
     this.injector = injector;
@@ -32,6 +34,17 @@ export abstract class BaseModel {
   protected update(deltaTime: number): void {
   }
 
-  protected render(): void {
+  public render(): void {
+    if (!this.context || !this.sprite.src) return;
+    this.context.drawImage(
+      this.sprite,
+      this.shiftFrame.x * this.size.width,
+      this.shiftFrame.y * this.size.height,
+      this.size.width,
+      this.size.height,
+      this.position.x * this.size.width,
+      this.position.y * this.size.height,
+      this.size.width,
+      this.size.height);
   }
 }
