@@ -12,6 +12,7 @@ import MenuPageComponent from '@menu/pages/main/main.component';
 import LobbyPageComponent from '@menu/pages/lobby/lobby.component';
 import MatchesPageComponent from '@menu/pages/matches/matches.component';
 import { userResolver } from '@menu/services/user.resolver';
+import { GameComponent } from '@game/game.component';
 
 export const routes: Routes = [
     {
@@ -34,6 +35,10 @@ export const routes: Routes = [
                 component: RegisterPageComponent
             },
         ]
+    },
+    {
+        path: 'game',
+        component: GameComponent
     },
     {
         path: '',
@@ -65,6 +70,6 @@ export const routes: Routes = [
     },
     {
         path: '**',
-        redirectTo: '/main'
+        redirectTo: '/game'
     }
 ];

@@ -1,8 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Player, PlayerStatus, PlayerStatusChange } from '@game/models/types';
-import { OpCode, SocketService } from '@game/services/socket.service';
-import { Match, MatchPresenceEvent, User } from '@heroiclabs/nakama-js';
+import { OpCode, Player, PlayerStatus, SocketService } from '@game/services/socket.service';
+import { MatchPresenceEvent, User } from '@heroiclabs/nakama-js';
 import { merge } from 'rxjs';
 
 @Component({
