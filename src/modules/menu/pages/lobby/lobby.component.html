@@ -5,7 +5,7 @@
 </div>
 <div class="buttons">
     @if (isHost) {
-        <button (click)="start()" disabled>Start game</button>
+        <button (click)="start()">Start game</button>
     }
     @if (currentStatus === 'notready') {
         <button (click)="markAs('ready')">I am ready</button>

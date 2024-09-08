@@ -1,58 +1,50 @@
-import { fromEvent, map, merge, Observable, scan, share } from "rxjs";
+import { filter, fromEvent, map, merge, Observable, scan, share } from "rxjs";
 import { IPoint } from "../../utils";
+import { AbstractController, Direction } from './controller';
 
-export class KeyboardController {
+const keyMap: Map<string, Direction> = new Map([
+  [ "w", Direction.Up ],
+  [ "a", Direction.Left ],
+  [ "s", Direction.Down ],
+  [ "d", Direction.Right ],
+  [ "ц", Direction.Up ],
+  [ "ф", Direction.Left ],
+  [ "ы", Direction.Down ],
+  [ "в", Direction.Right ],
+]);
+
+const isVoiceCommand = (key: string) => ['f', 'а'].includes(key.toLocaleLowerCase());
+
+export class KeyboardController extends AbstractController {
+  private readonly actionStart$ = fromEvent<MouseEvent>(document, "mousedown").pipe(map(() => true));
+  private readonly actionEnd$ = fromEvent<MouseEvent>(document, "mouseup").pipe(map(() => false));
   private readonly keypress$: Observable<KeyboardEvent> = fromEvent<KeyboardEvent>(document, "keydown");
   private readonly keyup$: Observable<KeyboardEvent> = fromEvent<KeyboardEvent>(document, "keyup");
-  private readonly mousedown$: Observable<MouseEvent> = fromEvent<MouseEvent>(document, "mousedown");
-  private readonly mouseup$: Observable<MouseEvent> = fromEvent<MouseEvent>(document, "mouseup");
   private readonly keys$: Observable<KeyboardEvent> = merge(this.keypress$, this.keyup$).pipe(share());
+  protected override directions$ = this.keys$.pipe(scan((activeKeys: Set<Direction>, event: KeyboardEvent) => {
+    const key = event.key.toString().toLowerCase();
+    const direction = keyMap.get(key);
+    if (direction) {
+      if (event.type === "keydown") {
+        activeKeys.add(direction);
+      } else if (event.type === "keyup") {
+        activeKeys.delete(direction);
+      }
+    }
+
+    return activeKeys;
+  }, new Set<Direction>()),);
+  protected override voiceCommandTrigger$ = merge(
+    this.keypress$.pipe(filter(e => isVoiceCommand(e.key)), map(() => true)),
+    this.keyup$.pipe(filter(e => isVoiceCommand(e.key)), map(() => false)),
+  );
+
+  override action$ = merge(this.actionStart$, this.actionEnd$).pipe(share())
+  override voiceCommand$ = this.initVoiceCommand();
+  override moveDirection$ = this.initMoveDirection();
+
   public readonly mousemove$: Observable<IPoint> = fromEvent<MouseEvent>(document, "mousemove").pipe(
     map((event: MouseEvent): IPoint => ({ x: event.clientX, y: event.clientY })),
     share()
   );
-  public readonly mouseClick$: Observable<boolean> = merge(this.mousedown$, this.mouseup$)
-    .pipe(
-      map((event: MouseEvent): boolean => event.type === "mousedown"),
-      share());
-
-  keyboardClick$(): Observable<IPoint> {
-    const keyMap: Map<string, IPoint> = new Map([
-      [ "w", { x: 0, y: -1 } ],
-      [ "a", { x: -1, y: 0 } ],
-      [ "s", { x: 0, y: 1 } ],
-      [ "d", { x: 1, y: 0 } ],
-      [ "ц", { x: 0, y: -1 } ],
-      [ "ф", { x: -1, y: 0 } ],
-      [ "ы", { x: 0, y: 1 } ],
-      [ "в", { x: 1, y: 0 } ],
-    ]);
-
-    return this.keys$.pipe(
-      scan((activeKeys: Set<string>, event: KeyboardEvent) => {
-        const key = event.key.toString().toLowerCase();
-        if (event.type === "keydown") {
-          activeKeys.add(key);
-        } else if (event.type === "keyup") {
-          activeKeys.delete(key);
-        }
-
-        return activeKeys;
-      }, new Set<string>()),
-      map((keys: Set<string>) => {
-        return Array.from(keys)
-          .map((key: string) => keyMap.get(key))
-          .reduce((acc: IPoint, curr: IPoint | undefined) => {
-              if (curr) {
-                acc.x += curr.x;
-                acc.y += curr.y;
-              }
-              return acc;
-            },
-            { ...{ x: 0, y: 0 } },
-          );
-      }),
-      share(),
-    );
-  }
 }

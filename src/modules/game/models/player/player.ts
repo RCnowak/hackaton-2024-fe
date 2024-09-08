@@ -69,10 +69,10 @@ export class Player extends BaseModel implements ISceneObject {
         this._mousePosition = mouseDirection;
       })
     ).subscribe();
-    this._controller.mouseClick$.pipe(
+    this._controller.action$.pipe(
       tap((attack: boolean) => this._attack = attack)
     ).subscribe();
-    this._controller.keyboardClick$().pipe(
+    this._controller.moveDirection$.pipe(
       tap((direction: IPoint) => this.direction = direction)
     ).subscribe();
   }
