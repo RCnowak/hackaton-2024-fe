@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
@@ -16,11 +16,12 @@ import { AuthService } from '../../services/auth.service';
 export default class LoginPageComponent {
     private auth = inject(AuthService);
     private router = inject(Router);
-    email: string = '';
+    username: string = '';
     password: string = '';
 
+    @HostListener('document:keydown.enter')
     login() {
-        this.auth.login(this.email, this.password)
+        this.auth.login(this.username + '@mail.ru', this.password)
             .then(() => {
                 this.router.navigateByUrl('/main');
             });

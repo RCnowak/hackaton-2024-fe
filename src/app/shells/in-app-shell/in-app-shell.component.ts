@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../modules/auth/services/auth.service';
+import { Location } from '@angular/common';
 
 @Component({
     templateUrl: './in-app-shell.component.html',
@@ -12,10 +13,15 @@ import { AuthService } from '../../../modules/auth/services/auth.service';
 })
 export default class InAppShellComponent {
     private auth = inject(AuthService);
-    private router = inject(Router);
+    private location = inject(Location);
+    protected router = inject(Router);
 
     logout() {
         this.auth.logout()
             .then(() => this.router.navigateByUrl('/login'));
+    }
+
+    back() {
+        this.location.back();
     }
 }

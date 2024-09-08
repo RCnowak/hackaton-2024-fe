@@ -1,7 +1,10 @@
-<div class="players">
-    @for (player of players; track player.id) {
-        <p class="player" [class.ready]="player.status === 'ready'">{{ player.username }}</p>
-    }
+<div class="wrapper">
+    <h1>Лобби</h1>
+    <div class="players">
+        @for (player of players; track player.id) {
+            <p class="player" [class.ready]="player.status === 'ready'">{{ player.username }}</p>
+        }
+    </div>
 </div>
 <div class="buttons">
     @if (isHost) {
