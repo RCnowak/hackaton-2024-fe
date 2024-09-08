@@ -17,18 +17,18 @@ import { Injector } from "@angular/core";
 
 const enemies = [
   "big spider.png",
-  "brown werewolf.png",
-  "brown werewolf in various.png",
+  // "brown werewolf.png",
+  // "brown werewolf in various.png",
   "fire ant.png",
-  "goblin bow.png",
-  "goblin elite.png",
-  "goblin peak.png",
-  "orc sword shield.png",
-  "orc with an ax.png",
-  "skeleton.png",
+  // "goblin bow.png",
+  // "goblin elite.png",
+  // "goblin peak.png",
+  // "orc sword shield.png",
+  // "orc with an ax.png",
+  // "skeleton.png",
   "small spider.png",
-  "white werewolf.png",
-  "white werewolf in various.png",
+  // "white werewolf.png",
+  // "white werewolf in various.png",
   // "wyvern.png"
 ];
 
@@ -55,15 +55,29 @@ export class Enemy extends BaseModel implements ISceneObject {
   }
 
   public override render(): void {
-    if (!this.context) return;
+    if (!this.context || !detectCollision(
+      {
+        position: {
+          x: this._target.offset.x + (this.position.x * this.size.width),
+          y: this._target.offset.y + (this.position.y * this.size.height),
+        },
+        size: {
+          width: this.size.width,
+          height: this.size.height
+        }
+      }, { position: { x: 0, y: 0, }, size: { width: this.canvas.width, height: this.canvas.height } }
+    )) {
+      return;
+    }
+
     this.context.drawImage(
       this.sprite,
       this._imageSize.width * (this.shiftFrame.x % 12),
       this.shiftFrame.y * this._imageSize.height,
       this._imageSize.width,
       this._imageSize.height,
-      this._target.offset.x + (this.position.x * BLOCK_SIZE),
-      this._target.offset.y + (this.position.y * BLOCK_SIZE),
+      this._target.offset.x + (this.position.x * this.size.width),
+      this._target.offset.y + (this.position.y * this.size.height),
       this.size.width,
       this.size.height);
   }

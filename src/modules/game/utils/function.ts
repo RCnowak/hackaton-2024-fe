@@ -3,7 +3,6 @@ import { INode, ISceneObject } from "./interfaces";
 import { IPoint, ISize } from "./types";
 import { BLOCK_SIZE, LEVEL_SIZE } from "./constants";
 import { DirectionOffsetEnum, LevelEnum } from "./enums";
-import { SceneObject } from "../models/base/scene-object";
 import { directionMap } from "./records";
 import { BaseModel } from "../models/base/base-model";
 
@@ -13,7 +12,7 @@ export function deltaTime(): Observable<number> {
 
     function tick(): void {
       const currentTime: number = animationFrameScheduler.now();
-      const deltaTime: number = currentTime - previousTime;
+      const deltaTime: number = (currentTime - previousTime) / 1000;
       previousTime = currentTime;
 
       observer.next(deltaTime);

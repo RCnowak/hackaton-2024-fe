@@ -61,7 +61,7 @@ export class Game extends BaseModel {
     };
 
     this.delta$.pipe(
-      map((deltaTime: number) => deltaTime / 1000),
+      map((deltaTime: number) => deltaTime),
       tap((deltaTime: number): void => {
           update(deltaTime);
           render();

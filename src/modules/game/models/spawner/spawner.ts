@@ -1,4 +1,4 @@
-import { BLOCK_SIZE, IPoint, ISceneObject, ISize, SPAWNER_COUNT } from "../../utils";
+import { BLOCK_SIZE, detectCollision, IPoint, ISceneObject, ISize, SPAWNER_COUNT } from "../../utils";
 import { BaseModel } from "../base/base-model";
 import { Player } from "../player/player";
 import { Injector } from "@angular/core";
@@ -32,7 +32,20 @@ export class Spawner extends BaseModel implements ISceneObject {
   }
 
   public override render(): void {
-    if (!this.player) return;
+    if (!this.context || !detectCollision(
+      {
+        position: {
+          x: this.player.offset.x + (this.position.x * this.size.width),
+          y: this.player.offset.y + (this.position.y * this.size.height),
+        },
+        size: {
+          width: this.size.width,
+          height: this.size.height
+        }
+      }, { position: { x: 0, y: 0, }, size: { width: this.canvas.width, height: this.canvas.height } }
+    )) {
+      return;
+    }
     this.context.drawImage(
       this.sprite,
       this.shiftFrame.x,
