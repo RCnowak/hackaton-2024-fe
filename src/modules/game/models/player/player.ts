@@ -38,7 +38,7 @@ export class Player extends BaseModel implements ISceneObject {
   public power = BASE_POWER;
 
   // Настройки персонажа
-  private _speed: number = BASE_SPEED;
+  _speed: number = BASE_SPEED;
   private _cooldownAttack: number = COOLDOWN_ATTACK;
   public override shiftFrame: IPoint = { x: 0, y: 0 };
   public currentLevel = 1;
