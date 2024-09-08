@@ -19,11 +19,17 @@ export default class LoginPageComponent {
     username: string = '';
     password: string = '';
 
+    error: string = '';
     @HostListener('document:keydown.enter')
     login() {
         this.auth.login(this.username + '@mail.ru', this.password)
             .then(() => {
                 this.router.navigateByUrl('/main');
-            });
+                this.error = '';
+            }).catch(response=>{
+              if(response.status === 400) {
+                this.error = 'неверный логин или пароль';
+              }
+        });
     }
 }

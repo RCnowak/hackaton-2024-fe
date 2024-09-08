@@ -1,6 +1,9 @@
 <div class="login">
-    <input placeholder="Никнейм" [(ngModel)]="username"/>
-    <input type="Пароль" placeholder="password" [(ngModel)]="password"/>
-    <button (click)="login()">Вход</button>
-    <a routerLink="/register" class="registration-button">Регистрация</a>
+<div class="wrapper">
+  <p style="color: red">{{error}}</p>
+    <input class="m-10" placeholder="Никнейм" [(ngModel)]="username"/>
+    <input class="m-10" type="Пароль" placeholder="password" [(ngModel)]="password"/>
+    <button class="m-30" (click)="login()">Вход/Регистрация</button>
+<!--    <a routerLink="/register" class="registration-button">Регистрация</a>-->
+</div>
 </div>
