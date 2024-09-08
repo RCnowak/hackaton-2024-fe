@@ -33,7 +33,7 @@ export class Arrow extends BaseModel implements ISceneObject {
     this.position.y = this.position.y + this._direction.y * this._speed * deltaTime;
     this._currentDistance += deltaTime;
     if (this._currentDistance > this._maxDistance) {
-      this.socket.dispatchGameEvent({ action: "cancel_attack", payload: this });
+      this.socket.dispatchGameEvent({ action: "cancel_attack", payload: this.id });
     }
   }
 }

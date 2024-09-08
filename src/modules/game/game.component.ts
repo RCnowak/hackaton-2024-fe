@@ -80,8 +80,7 @@ export class GameComponent {
 
   public createScene(): void {
     const level: LevelEnum[][] = Level.generate();
-    const scene: Scene = new Scene(this.injector, level);
-    this.socket.dispatchGameEvent({ action: "set_scene", payload: scene });
+    this.socket.dispatchGameEvent({ action: "set_scene", payload: level });
     this.game.createCurrentPlayer(level);
   }
 }
