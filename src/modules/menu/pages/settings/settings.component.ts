@@ -51,7 +51,7 @@ export default class SettingsPageComponent {
     }
   }
   save(data?:any) {
-    if (data.path) {
+    if (data) {
       this.nakama.updateAccount(this.session.session!, {
         display_name : this.username,
         avatar_url: data.path,
