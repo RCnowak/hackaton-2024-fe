@@ -10,6 +10,7 @@
 }
 .text-left {
   text-align: left;
+  width: 500px;
 }
 .m-t-20 {
   margin-top: 20px;
@@ -25,4 +26,25 @@
   width: 600px;
   align-items: center;
   background-color: rgba(250, 235, 215, 0.5);
+}
+.img-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+.avatar {
+  border: 2px dotted cadetblue;
+  margin-bottom: 20px;
+}
+.wrapper {
+  color: #ffffff;
+  background-color: green;
+}
+.wrapper-red {
+  color: #ffffff;
+  background-color: red;
+}
+button.upload-btn {
+  width: 345px;
 }

@@ -1,4 +1,5 @@
 import { IPoint } from '@game/utils';
+import { abillityMap } from '@game/utils/abillityCodes';
 import { distinctUntilChanged, map,  NEVER, Observable, share, Subject } from 'rxjs';
 
 export enum Direction {
@@ -55,12 +56,13 @@ export abstract class AbstractController {
 
         const recognition = new Recognition();
         if (GrammarList && actions) {
+            const actions = ['атака', 'исцеление', 'апокалипсис'];
             const speechRecognitionList = new GrammarList();
             const grammar = '#JSGF V1.0; grammar actions; public <actions> = ' + actions.join(' | ') + ' ;'
             speechRecognitionList.addFromString(grammar, 1);
             recognition.grammars = speechRecognitionList;
         }
-        recognition.continuous = false;
+        recognition.continuous = true;
         recognition.lang = 'ru-RU';
         recognition.interimResults = false;
         recognition.maxAlternatives = 1;
@@ -69,7 +71,6 @@ export abstract class AbstractController {
             .pipe(distinctUntilChanged())
             .subscribe((trigger) => {
                 if (trigger) {
-                    recognition.abort();
                     recognition.start();
                 } else {
                     recognition.stop()
@@ -77,9 +78,16 @@ export abstract class AbstractController {
             });
 
         recognition.onresult = function (event: any) {
+            let abillityCode = null;
+            console.log(event.results)
+            abillityMap.forEach((value, key) => {
+                if (value === event.results[0][0].transcript) {
+                    abillityCode = key;
+                }
+            })
             result.next({
                 type: 'command',
-                text: event.results[0][0].transcript
+                text: abillityCode!
             });
         };
 

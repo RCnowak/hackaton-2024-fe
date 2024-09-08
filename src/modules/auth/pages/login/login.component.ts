@@ -27,7 +27,7 @@ export default class LoginPageComponent {
                 this.router.navigateByUrl('/main');
                 this.error = '';
             }).catch(response=>{
-              if(response.status === 400) {
+              if(response.status === 400 || response.status === 401) {
                 this.error = 'неверный логин / пароль';
               }
             if(this.password.length < 8 && this.username) {

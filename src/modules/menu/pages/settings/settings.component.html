@@ -1,8 +1,14 @@
 <div class="settings">
   <h1>Настройки пользователя</h1>
+  <div class="wrapper">
+    <p>{{message}}</p>
+  </div>
+  <div class="wrapper-red">
+    <p>{{error}}</p>
+  </div>
   <div class="text-left m-t-20">
-    <label for="id">Никнейм: </label>
-    <input id="id" placeholder="введите никнейм" [(ngModel)]="username"/>
+    <label for="id">Отображаемое имя: </label>
+    <input id="id" placeholder="введите имя" [(ngModel)]="username"/>
   </div>
   <div class="text-left m-t-20">
 
@@ -16,7 +22,7 @@
       <button color="primary" class="upload-btn"
               (click)="fileUpload.click()">Загрузить аватар
       </button>
-      <div>{{fileName || ""}}</div>
+      <div ngIf="fileName" class="img-center m-t-20"><img class="avatar" width="200" src="{{ fileName }}"/></div>
     </div>
   </div>
 </div>
