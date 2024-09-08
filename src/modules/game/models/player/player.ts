@@ -82,6 +82,14 @@ export class Player extends BaseModel implements ISceneObject {
     this._controller.moveDirection$.pipe(
       tap((direction: IPoint) => this.direction = direction)
     ).subscribe();
+    this._controller.voiceCommand$
+      .subscribe(command => {
+        console.log(command);
+        this.socket.dispatchGameEvent({
+          action: "apply_ability",
+          payload: {userId: this.id, abillityCode: command.type}
+        });
+      });
   }
 
   constructor(injector: Injector, id: string, position: IPoint, level: LevelEnum[][]) {

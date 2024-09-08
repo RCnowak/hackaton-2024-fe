@@ -22,8 +22,8 @@ import { Arrow } from "../player/arrow";
 import { Wall } from "../scene/models/wall";
 
 export class Game extends BaseModel {
+  _currentPlayer!: Player;
   private _scene!: Scene;
-  private _currentPlayer!: Player;
   private _enemiesWaiting: number = SPAWNER_COUNT;
   private _players: Map<string, Player> = new Map();
   private _activeSpawners: Map<string, Spawner> = new Map();
