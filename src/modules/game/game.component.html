@@ -1,5 +1,9 @@
 <canvas id="canvas" (contextmenu)="$event.preventDefault()"></canvas>
-<!-- <div class="buttons">
-  <button (click)="createGame()">Create Game</button>
-  <button (click)="createScene()">Create Scene</button>
-</div> -->
+<div class="buttons">
+  <img src="images/interface/panel.png" alt="">
+  <div class="actions">
+    <div class="action" (click)="atack($event)"></div>
+    <div class="action" (click)="heal($event)"></div>
+    <div class="action" (click)="destroy($event)"></div>
+  </div>
+</div>

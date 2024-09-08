@@ -83,4 +83,19 @@ export class GameComponent {
     this.socket.dispatchGameEvent({ action: "set_scene", payload: level });
     this.game.createCurrentPlayer(level);
   }
+
+  atack(event: MouseEvent) {
+    event.stopPropagation();
+
+  }
+
+  heal(event: MouseEvent) {
+    event.stopPropagation();
+
+  }
+
+  destroy(event: MouseEvent) {
+    event.stopPropagation();
+
+  }
 }
