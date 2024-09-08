@@ -28,7 +28,7 @@ export default class LoginPageComponent {
                 this.error = '';
             }).catch(response=>{
               if(response.status === 400) {
-                this.error = 'неверный логин или пароль';
+                this.error = 'неверный логин / пароль';
               }
         });
     }
