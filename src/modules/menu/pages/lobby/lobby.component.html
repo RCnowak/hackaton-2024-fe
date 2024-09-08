@@ -8,13 +8,13 @@
 </div>
 <div class="buttons">
     @if (isHost) {
-        <button (click)="start()" disabled>Start game</button>
+        <button (click)="start()" disabled>Начать игру</button>
     }
     @if (currentStatus === 'notready') {
-        <button (click)="markAs('ready')">I am ready</button>
+        <button (click)="markAs('ready')">Я готов играть</button>
     }
     @if (currentStatus === 'ready') {
-        <button (click)="markAs('notready')">I am not ready</button>
+        <button (click)="markAs('notready')">Я не готов играть</button>
     }
-    <button (click)="leave()">Leave game</button>
+    <button (click)="leave()">Покинуть игру</button>
 </div>
