@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -19,8 +19,9 @@ export default class RegisterPageComponent {
     username: string = '';
     password: string = '';
 
+    @HostListener('document:keydown.enter')
     register() {
-        this.auth.register(this.username, this.password)
+        this.auth.register(this.username + '@mail.ru', this.password)
             .then(() => {
                 this.router.navigateByUrl('/main');
             });

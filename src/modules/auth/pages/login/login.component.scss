@@ -12,3 +12,32 @@
 .login {
     gap: 24px;
 }
+.registration-button {
+  padding: 24px 32px;
+  font-size: 24px;
+  padding: 24px 32px;
+  font-size: 24px;
+  background-color: #efefef;
+  border-color: #000!important;
+  border: 0.22rem solid;
+  border-radius: 0.3rem;
+  box-shadow: 0.2rem 0.2rem 0 #000!important;
+  cursor: pointer;
+  font-family: Pixel;
+  color: #000;
+  text-decoration: none;
+}
+.registration-button:hover:not(:disabled) {
+  background-color: antiquewhite;
+  color: blue;
+}
+.wrapper {
+  color: #ffffff;
+  background-color: red;
+}
+.m-30 {
+  margin: 30px;
+}
+.m-10 {
+  margin: 10px;
+}

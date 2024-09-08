@@ -76,11 +76,22 @@ export class Game extends BaseModel {
       tap((message: IMessage): void => {
         switch ( message.action ) {
           case "add_player":
-            this._players.set(message.payload.id, message.payload);
+            const player: Player = new Player(this.injector, message.payload.uid, message.payload.position, message.payload.level);
+            player.controller = new KeyboardController();
+            this._currentPlayer = player;
+            this._scene.player = player;
+            this._players.set(message.payload.uid, player);
             this.activatedSpawners();
             break;
           case "player_attack":
-            this._arrows.set(message.payload.id, message.payload);
+            const arrow: Arrow = new Arrow(
+              this.injector,
+              message.payload.uid,
+              message.payload.position,
+              message.payload.direction,
+              this._players.get(message.payload.playerId)!
+            );
+            this._arrows.set(message.payload.uid, arrow);
             break;
           case "player_death":
             this._gameOver = true;
@@ -91,23 +102,30 @@ export class Game extends BaseModel {
             }
             break;
           case "add_enemy":
-            this._enemies.set(message.payload.id, message.payload);
+            const enemy: Enemy = new Enemy(
+              this.injector,
+              message.payload.uid,
+              message.payload.spawnerPosition,
+              this._players.get(message.payload.playerId)!,
+              message.payload.scenelevel
+            );
+            this._enemies.set(message.payload.id, enemy);
             break;
           case "cancel_attack":
-            this._arrows.delete(message.payload.id);
+            this._arrows.delete(message.payload);
             break;
           case "kill_enemy":
-            this._enemies.delete(message.payload.id);
+            this._enemies.delete(message.payload);
             break;
           case "set_scene":
-            this._scene = message.payload;
-            this._sceneObjects = message.payload.sceneObjects;
+            const scene: Scene = new Scene(this.injector, message.payload);
+            this._scene = scene;
+            this._sceneObjects = scene.sceneObjects as any;
             break;
           case "death_spawner":
             this._currentPlayer.levelUp();
             this._spawners.forEach((spawner: Spawner) => spawner.levelUp());
             this._activeSpawners.delete(message.payload.id);
-            break;
         }
       })
     ).subscribe();
@@ -129,21 +147,22 @@ export class Game extends BaseModel {
 
   private createEnemy(spawner: Spawner): void {
     if (this._enemiesWaiting && spawner.bornNewEnemy()) {
-      const uid: string = uuidv4();
-      const enemy: Enemy = new Enemy(this.injector, uid, spawner.position, this._currentPlayer, this._scene.level);
       this._enemiesWaiting--;
-      this.socket.on({ action: "add_enemy", payload: enemy });
+      this.socket.dispatchGameEvent({
+        action: "add_enemy", payload: {
+          uid: uuidv4(),
+          spawnerPosition: spawner.position,
+          playerId: this._currentPlayer.id,
+          scenelevel: this._scene.level
+        }
+      });
     }
   }
 
   public createCurrentPlayer(level: LevelEnum[][]): void {
     const position: IPoint = Level.getEmptyPosition(level);
     const uid: string = uuidv4();
-    const player: Player = new Player(this.injector, uid, position, level);
-    player.controller = new KeyboardController();
-    this._currentPlayer = player;
-    this._scene.player = player;
-    this.socket.on({ action: "add_player", payload: player });
+    this.socket.dispatchGameEvent({ action: "add_player", payload: { uid, position, level } });
   }
 
   private detectCollisionArrow(arrow: Arrow, deltaTime: number): void {
@@ -168,7 +187,7 @@ export class Game extends BaseModel {
         })) {
           detectHit = spawner;
           spawner.healthPoint -= this._currentPlayer.power;
-          this.socket.on({ action: "attack_spawner", payload: spawner });
+          this.socket.dispatchGameEvent({ action: "attack_spawner", payload: spawner });
         }
       });
 
@@ -189,14 +208,14 @@ export class Game extends BaseModel {
         })) {
           enemy.healthPoint -= arrow.player.power;
           if (enemy.healthPoint <= 0) {
-            this.socket.on({ action: "attack_enemy", payload: enemy });
+            this.socket.dispatchGameEvent({ action: "attack_enemy", payload: enemy });
           }
           detectHit = enemy;
         }
       });
 
     if (detectHit) {
-      this.socket.on({ action: "cancel_attack", payload: arrow });
+      this.socket.dispatchGameEvent({ action: "cancel_attack", payload: arrow });
       return;
     }
 

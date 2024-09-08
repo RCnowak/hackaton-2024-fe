@@ -6,7 +6,7 @@ if(!empty($_FILES['thumbnail']))
   $path = $path . $filename;
 
   if(move_uploaded_file($_FILES['thumbnail']['tmp_name'], $path)) {
-    echo "/uploads/".  basename( $_FILES['uploaded_file']['name']);
+    echo json_encode(['path'=>"/uploads/".  $filename]);
   } else{
     echo "There was an error uploading the file, please try again!";
   }

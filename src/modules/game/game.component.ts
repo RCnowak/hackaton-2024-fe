@@ -1,7 +1,7 @@
 import { Component, inject, Injector } from "@angular/core";
 import { DestroyService } from "./services/destroy.service";
 import { SocketService } from "./services/socket.service";
-import { CANVAS, CONTEXT, DELTA_TIME, deltaTime, LevelEnum, SOCKET } from "./utils";
+import { CANVAS, CONTEXT, DELTA_TIME, deltaTime, LevelEnum } from "./utils";
 import { Observable, takeUntil } from "rxjs";
 import { DOCUMENT } from "@angular/common";
 import { Game } from "./models/game/game";
@@ -11,12 +11,10 @@ import { v4 as uuidv4 } from "uuid";
 
 
 @Component({
-  selector: "app-root",
   templateUrl: "./game.component.html",
   styleUrls: [ "./game.component.scss" ],
   providers: [
     DestroyService,
-    SocketService,
     {
       provide: DELTA_TIME,
       deps: [ DestroyService ],
@@ -42,10 +40,6 @@ import { v4 as uuidv4 } from "uuid";
       },
     },
     {
-      provide: SOCKET,
-      useClass: SocketService
-    },
-    {
       provide: CONTEXT,
       deps: [ CANVAS ],
       useFactory: (canvas: HTMLCanvasElement): CanvasRenderingContext2D => {
@@ -66,9 +60,17 @@ import { v4 as uuidv4 } from "uuid";
 
 export class GameComponent {
   game!: Game;
-  socket: SocketService = inject(SOCKET);
+  socket: SocketService = inject(SocketService);
 
   constructor(private readonly injector: Injector) {
+  }
+
+  ngOnInit() {
+    this.createGame();
+    if (this.socket.isHost) {
+      console.log(this.socket.isHost)
+      this.createScene();
+    }
   }
 
   public createGame(): void {
@@ -78,8 +80,7 @@ export class GameComponent {
 
   public createScene(): void {
     const level: LevelEnum[][] = Level.generate();
-    const scene: Scene = new Scene(this.injector, level);
-    this.socket.on({ action: "set_scene", payload: scene });
+    this.socket.dispatchGameEvent({ action: "set_scene", payload: level });
     this.game.createCurrentPlayer(level);
   }
 }

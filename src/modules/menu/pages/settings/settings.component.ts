@@ -34,7 +34,6 @@ export default class SettingsPageComponent {
     this.fileName = user?.avatar_url||'';
   }
   onFileSelected(event:any) {
-    // this.socket.socket!.
 
     const file:File = event.target.files[0];
 
@@ -47,13 +46,13 @@ export default class SettingsPageComponent {
       formData.append("thumbnail", file);
 
       this.http.post("/upload/", formData)
-        .subscribe(data => this.save());
+        .subscribe(data => this.save(data));
     }
   }
-  save() {
+  save(data?:any) {
     this.nakama.updateAccount(this.session.session!, {
       display_name : this.username,
-      avatar_url: this.fileName,
+      avatar_url: data.path,
       username: this.username
     });
   }

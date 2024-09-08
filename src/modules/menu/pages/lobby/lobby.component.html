@@ -1,17 +1,21 @@
-<div class="players">
-    @for (player of players; track player.id) {
-        <p class="player" [class.ready]="player.status === 'ready'">{{ player.username }}</p>
-    }
+<div class="wrapper">
+    <h1>Лобби</h1>
+    <h3>({{ socket.match?.match_id }})</h3>
+    <div class="players">
+        @for (player of players; track player.id) {
+            <p class="player" [class.ready]="player.status === 'ready'">{{ player.username }}</p>
+        }
+    </div>
 </div>
 <div class="buttons">
     @if (isHost) {
-        <button (click)="start()" disabled>Start game</button>
+        <button (click)="start()">Начать игру</button>
     }
     @if (currentStatus === 'notready') {
-        <button (click)="markAs('ready')">I am ready</button>
+        <button (click)="markAs('ready')">Я готов играть</button>
     }
     @if (currentStatus === 'ready') {
-        <button (click)="markAs('notready')">I am not ready</button>
+        <button (click)="markAs('notready')">Я не готов играть</button>
     }
-    <button (click)="leave()">Leave game</button>
+    <button (click)="leave()">Покинуть игру</button>
 </div>

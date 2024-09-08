@@ -6,8 +6,17 @@
     height: 100%;
 }
 
-button {
-    padding: 16px 24px;
-    font-size: 16px;
-    margin-bottom: 32px;
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    &:has(button:only-child) {
+        justify-content: flex-end;
+    }
+    button {
+        padding: 16px 24px;
+        font-size: 16px;
+        margin-bottom: 32px;
+    }
 }
