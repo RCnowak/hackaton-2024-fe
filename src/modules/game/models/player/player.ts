@@ -92,11 +92,11 @@ export class Player extends BaseModel implements ISceneObject {
       });
   }
 
-  constructor(injector: Injector, id: string, position: IPoint, level: LevelEnum[][]) {
+  constructor(injector: Injector, id: string, position: IPoint, gameClass: "mage" | "archer", level: LevelEnum[][]) {
     super(injector, id);
     this.position = position;
     this.level = level;
-    this.sprite.src = `/images/archer.png`;
+    this.sprite.src = `/images/${ gameClass }.png`;
   }
 
   public override update(deltaTime: number): void {
@@ -110,11 +110,13 @@ export class Player extends BaseModel implements ISceneObject {
       width: this.canvas.width / 2,
       height: this.canvas.height / 2
     });
-    this.socket.dispatchGameEvent({ action: "update_position", payload: {
-      id: this.id,
-      position: this.position,
-      offset: this._offset
-    } });
+    this.socket.dispatchGameEvent({
+      action: "update_position", payload: {
+        id: this.id,
+        position: this.position,
+        offset: this._offset
+      }
+    });
     this.attack();
     this.animation();
   }
@@ -204,7 +206,10 @@ export class Player extends BaseModel implements ISceneObject {
       y: this.position.y + this.size.height / BLOCK_SIZE / 2
     };
 
-    this.socket.dispatchGameEvent({ action: "player_attack", payload: {uid: uuidv4(), position, direction, playerId: this.id} });
+    this.socket.dispatchGameEvent({
+      action: "player_attack",
+      payload: { uid: uuidv4(), position, direction, playerId: this.id }
+    });
     this._lastAttackAt = currentTime;
   }
 

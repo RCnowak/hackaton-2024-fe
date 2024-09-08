@@ -76,7 +76,8 @@ export class Game extends BaseModel {
       tap((message: IMessage): void => {
         switch ( message.action ) {
           case "add_player":
-            const player: Player = new Player(this.injector, message.payload.uid, message.payload.position, message.payload.level);
+            const gameClass = "mage";
+            const player: Player = new Player(this.injector, message.payload.uid, message.payload.position, gameClass, message.payload.level);
             player.controller = new KeyboardController();
             this._currentPlayer = player;
             this._scene.player = player;
@@ -208,7 +209,10 @@ export class Game extends BaseModel {
         })) {
           enemy.healthPoint -= arrow.player.power;
           if (enemy.healthPoint <= 0) {
-            this.socket.dispatchGameEvent({ action: "attack_enemy", payload: {id: enemy.id, healthPoint: enemy.healthPoint} });
+            this.socket.dispatchGameEvent({
+              action: "attack_enemy",
+              payload: { id: enemy.id, healthPoint: enemy.healthPoint }
+            });
           }
           detectHit = enemy;
         }
