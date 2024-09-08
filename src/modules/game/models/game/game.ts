@@ -4,7 +4,7 @@ import { Scene } from "../scene/scene";
 import { Player } from "../player/player";
 import { map, tap } from "rxjs";
 import {
-  BLOCK_SIZE,
+  BLOCK_SIZE, COOLDOWN_ABBILITY,
   detectCollision,
   IMessage,
   IPoint,
@@ -20,7 +20,7 @@ import { v4 as uuidv4 } from "uuid";
 import { KeyboardController } from "../player/keyboard-controller";
 import { Arrow } from "../player/arrow";
 import { Wall } from "../scene/models/wall";
-import { AbbilityCode } from '@game/utils/abillityCodes';
+import { AbbilityCode } from "@game/utils/abillityCodes";
 
 export class Game extends BaseModel {
   _currentPlayer!: Player;
@@ -131,11 +131,17 @@ export class Game extends BaseModel {
             break;
           case "apply_ability":
             if (message.payload.abillityCode === AbbilityCode.destroy) {
+              const currentTime = Date.now();
+              if (currentTime - this._currentPlayer.lastUseAbbilityAt < COOLDOWN_ABBILITY) return;
               this._enemies.clear();
+              this._currentPlayer.lastUseAbbilityAt = currentTime;
             } else if (message.payload.abillityCode === AbbilityCode.heal) {
-              this._currentPlayer.healthPoint = Math.min(this._currentPlayer._maxHealthPoint, this._currentPlayer.healthPoint + 30)
+              const currentTime = Date.now();
+              if (currentTime - this._currentPlayer.lastUseAbbilityAt < COOLDOWN_ABBILITY) return;
+              this._currentPlayer.healthPoint = Math.min(this._currentPlayer.maxHealthPoint, this._currentPlayer.healthPoint + 30);
+              this._currentPlayer.lastUseAbbilityAt = currentTime;
             }
-        };
+        }
       })
     ).subscribe();
   }

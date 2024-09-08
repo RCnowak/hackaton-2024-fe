@@ -33,15 +33,16 @@ export class Player extends BaseModel implements ISceneObject {
   private _lastAttackAt: number = Date.now();
   private _lastUpdatedAnimationAt: number = Date.now();
   private _currentFrame: number = 0;
-   _maxHealthPoint = BASE_HEALTH_POINT;
   public healthPoint = BASE_HEALTH_POINT;
   public power = BASE_POWER;
-
   // Настройки персонажа
+
   private _speed: number = BASE_SPEED;
   private _cooldownAttack: number = COOLDOWN_ATTACK;
+  public maxHealthPoint = BASE_HEALTH_POINT;
   public override shiftFrame: IPoint = { x: 0, y: 0 };
-  public currentLevel = 1;
+  public currentLevel: number = 1;
+  public lastUseAbbilityAt: number = Date.now();
 
   get offset(): IPoint {
     return this._offset;
@@ -84,10 +85,9 @@ export class Player extends BaseModel implements ISceneObject {
     ).subscribe();
     this._controller.voiceCommand$
       .subscribe(command => {
-        console.log(command);
         this.socket.dispatchGameEvent({
           action: "apply_ability",
-          payload: {userId: this.id, abillityCode: command.type}
+          payload: { userId: this.id, abillityCode: command.type }
         });
       });
   }
@@ -144,7 +144,7 @@ export class Player extends BaseModel implements ISceneObject {
     this.context.fillRect(
       this.offset.x + (this.position.x * BLOCK_SIZE) + 48,
       this.offset.y + (this.position.y * BLOCK_SIZE) + 32,
-      this.healthPoint * 32 / this._maxHealthPoint,
+      this.healthPoint * 32 / this.maxHealthPoint,
       8);
     this.context.restore();
   }
@@ -224,8 +224,8 @@ export class Player extends BaseModel implements ISceneObject {
   public levelUp(): void {
     this.currentLevel++;
     this.power *= POWER_MULTIPLY;
-    const addedHealth: number = this._maxHealthPoint * HEALTH_MULTIPLY;
-    this.healthPoint += addedHealth - this._maxHealthPoint;
-    this._maxHealthPoint = addedHealth;
+    const addedHealth: number = this.maxHealthPoint * HEALTH_MULTIPLY;
+    this.healthPoint += addedHealth - this.maxHealthPoint;
+    this.maxHealthPoint = addedHealth;
   }
 }

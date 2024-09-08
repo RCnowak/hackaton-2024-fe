@@ -2,8 +2,16 @@
 <div class="buttons">
   <img src="images/interface/panel-sm.png" alt="">
   <div class="actions">
-    <div class="action" (mousedown)="atack($event)"></div>
-    <div class="action" (mousedown)="heal($event)"></div>
-    <div class="action" (mousedown)="destroy($event)"></div>
+    <div class="action"
+         [ngClass]="{'disable': disableButton()}"
+         (mousedown)="atack($event)"></div>
+    <div class="action"
+         [ngClass]="{'disable': disableButton()}"
+         (mousedown)="heal($event)"></div>
+    <div class="action"
+         [ngClass]="{'disable': disableButton()}"
+         (mousedown)="destroy($event)"></div>
   </div>
 </div>
+
+
