@@ -25,7 +25,8 @@ import { Wall } from "../scene/models/wall";
 import { AbbilityCode } from "@game/utils/abillityCodes";
 
 export class Game extends BaseModel {
-  _currentPlayer!: Player;
+  public _currentPlayer!: Player;
+  public gameOver: boolean = false;
   private _scene!: Scene;
   private _enemiesWaiting: number = SPAWNER_COUNT;
   private _players: Map<string, Player> = new Map();
@@ -34,7 +35,6 @@ export class Game extends BaseModel {
   private _enemies: Map<string, Enemy> = new Map();
   private _sceneObjects: Map<string, BaseModel> = new Map();
   private _spawners: Map<string, Spawner> = new Map();
-  private _gameOver: boolean = false;
   private _lastEnemyCreatedAt: number = Date.now();
 
 
@@ -69,7 +69,7 @@ export class Game extends BaseModel {
     this.delta$.pipe(
       map((deltaTime: number) => deltaTime),
       tap((deltaTime: number): void => {
-          if (this._gameOver) return;
+          if (this.gameOver) return;
           update(deltaTime);
           render();
         }
@@ -98,7 +98,7 @@ export class Game extends BaseModel {
             this._arrows.set(message.payload.uid, arrow);
             break;
           case "player_death":
-            this._gameOver = true;
+            this.gameOver = true;
             break;
           case "attack_enemy":
             if (message.payload.healthPoint <= 0) {

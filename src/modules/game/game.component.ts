@@ -3,11 +3,12 @@ import { DestroyService } from "./services/destroy.service";
 import { SocketService } from "./services/socket.service";
 import { CANVAS, CONTEXT, COOLDOWN_ABBILITY, DELTA_TIME, deltaTime, LevelEnum } from "./utils";
 import { Observable, takeUntil } from "rxjs";
-import { DOCUMENT, NgClass } from "@angular/common";
+import { DOCUMENT, NgClass, NgIf } from "@angular/common";
 import { Game } from "./models/game/game";
 import { Level } from "./models/level/level";
 import { v4 as uuidv4 } from "uuid";
 import { AbbilityCode } from "./utils/abillityCodes";
+import { Router } from "@angular/router";
 
 
 @Component({
@@ -56,7 +57,8 @@ import { AbbilityCode } from "./utils/abillityCodes";
     },
   ],
   imports: [
-    NgClass
+    NgClass,
+    NgIf
   ],
   standalone: true
 })
@@ -65,7 +67,7 @@ export class GameComponent {
   game!: Game;
   socket: SocketService = inject(SocketService);
 
-  constructor(private readonly injector: Injector) {
+  constructor(private readonly injector: Injector, private router: Router) {
   }
 
   ngOnInit() {
@@ -88,7 +90,10 @@ export class GameComponent {
 
   atack(event: MouseEvent) {
     event.stopPropagation();
-    this.socket.dispatchGameEvent({ action: "apply_ability", payload: {userId: this.game._currentPlayer.id, abillityCode: AbbilityCode.speed} });
+    this.socket.dispatchGameEvent({
+      action: "apply_ability",
+      payload: { userId: this.game._currentPlayer.id, abillityCode: AbbilityCode.speed }
+    });
   }
 
   heal(event: MouseEvent) {
@@ -113,4 +118,8 @@ export class GameComponent {
 
   protected readonly Date = Date;
   protected readonly COOLDOWN_ABBILITY = COOLDOWN_ABBILITY;
+
+  return() {
+    this.router.navigateByUrl("/main");
+  }
 }

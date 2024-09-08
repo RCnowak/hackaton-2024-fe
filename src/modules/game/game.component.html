@@ -13,5 +13,7 @@
          (mousedown)="destroy($event)"></div>
   </div>
 </div>
-
-
+<div *ngIf="game.gameOver" class="gameOver">
+  <div class="text">Вы проиграли</div>
+  <button class="return" (click)="return()">Вернуться в лобби</button>
+</div>
