@@ -30,6 +30,9 @@ export default class LoginPageComponent {
               if(response.status === 400) {
                 this.error = 'неверный логин / пароль';
               }
+            if(this.password.length < 8 && this.username) {
+              this.error = 'пароль должен быть не меньше 8 символов';
+            }
         });
     }
 }
