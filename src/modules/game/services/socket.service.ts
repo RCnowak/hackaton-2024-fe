@@ -17,24 +17,18 @@ export type Player = {
     providedIn: 'root'
 })
 export class SocketService {
-    private message$$: BehaviorSubject<IMessage> = new BehaviorSubject<IMessage>({
-        action: "init",
-        payload: null
-    });
-
-    public message$: Observable<IMessage> = this.message$$.asObservable();
-
-    public on(message: IMessage): void {
-        this.message$$.next(message);
-    }
-
-
-
     private nakama = inject(NAKAMA);
     private session = inject(SessionService).session;
     socket!: Socket | null;
     match: Match | null = null;
     matchData$: Subject<MatchData> = new Subject();
+    isHost: boolean = false;
+
+    private message$$: BehaviorSubject<IMessage> = new BehaviorSubject<IMessage>({
+        action: "init",
+        payload: null
+    });
+    public message$: Observable<IMessage> = this.message$$.asObservable();
 
     async create() {
         this.socket = this.nakama.createSocket();
@@ -54,15 +48,19 @@ export class SocketService {
     }
 
     async createMatch(username: string) {
-        this.match = await this.create()
-            .then(socket => socket.createMatch(username));
-        this.listenMatchData();
+        this.isHost = true;
+        this.match = await this.socket!.createMatch(username);
+        this.listenMatchData()
+        
+        return this.match;
     }
 
     async joinMatch(match_id: string) {
         this.match = await this.socket!.joinMatch(match_id);
         await this.requestStatus(match_id);
-        this.listenMatchData();
+        this.listenMatchData()
+        
+        return this.match;
     }
 
     async leaveMatch() {
@@ -85,12 +83,20 @@ export class SocketService {
         this.socket!.onmatchdata = (matchdata: MatchData) => {
             const decoder = new TextDecoder();
             const str = decoder.decode(matchdata.data);
-            console.log(str);
+            const data = str && JSON.parse(str);
             this.matchData$.next({
                 ...matchdata,
                 data: str && JSON.parse(str)
             });
+            if (matchdata.op_code === OpCode.GameEvent) {
+                this.message$$.next(data);
+            }
         };
+    }
+
+    dispatchGameEvent(message: IMessage) {
+        this.message$$.next(message);
+        this.sendMatchData(OpCode.GameEvent, message);
     }
 }
 

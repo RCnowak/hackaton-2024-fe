@@ -15,7 +15,6 @@ import {
 } from "../../utils";
 import { KeyboardController } from "./keyboard-controller";
 import { tap } from "rxjs";
-import { Arrow } from "./arrow";
 import { v4 as uuidv4 } from "uuid";
 
 export class Player extends BaseModel implements ISceneObject {
@@ -91,7 +90,11 @@ export class Player extends BaseModel implements ISceneObject {
       width: this.canvas.width / 2,
       height: this.canvas.height / 2
     });
-    this.socket.on({ action: "update_position", payload: this });
+    this.socket.dispatchGameEvent({ action: "update_position", payload: {
+      id: this.id,
+      position: this.position,
+      offset: this._offset
+    } });
     this.attack();
     this.animation();
   }
@@ -142,7 +145,6 @@ export class Player extends BaseModel implements ISceneObject {
     if (!this._attack || (currentTime - this._lastAttackAt < this._cooldownAttack)) {
       return;
     }
-    const uid: string = uuidv4();
 
     const centerObject: IPoint = {
       x: this._offset.x + (this.position.x * BLOCK_SIZE + this.size.width / 2),
@@ -167,8 +169,7 @@ export class Player extends BaseModel implements ISceneObject {
       y: this.position.y + this.size.height / BLOCK_SIZE / 2
     };
 
-    const arrow: Arrow = new Arrow(this.injector, uid, position, direction, this);
-    this.socket.on({ action: "player_attack", payload: arrow });
+    this.socket.dispatchGameEvent({ action: "player_attack", payload: {uid: uuidv4(), position, direction, playerId: this.id} });
     this._lastAttackAt = currentTime;
   }
 

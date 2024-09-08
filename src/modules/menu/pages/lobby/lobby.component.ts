@@ -12,7 +12,7 @@ export default class LobbyPageComponent {
     private router = inject(Router);
     private route = inject(ActivatedRoute).snapshot;
     private user: User = this.route.parent?.data['user'].user;
-    private socket = inject(SocketService);
+    protected socket = inject(SocketService);
     users: string[] = [];
     players: Player[] = []
 
@@ -25,11 +25,7 @@ export default class LobbyPageComponent {
         const match_id =  this.route.queryParams['match_id'];
         this.isHost = !match_id;
 
-        if (this.isHost) {
-            await this.createMatch();
-        } else {
-            await this.joinMatch(match_id)
-        }
+        await this.socket.create();
 
         this.socket.socket!.onmatchpresence = matchpresence => {
             this.addPlayers(matchpresence.joins || []);
@@ -44,7 +40,6 @@ export default class LobbyPageComponent {
         )
             .pipe(takeUntil(this.unsubscribe))
             .subscribe((matchData: any) => {
-                console.log(matchData)
                 const players = matchData.data as Player[];
                 console.log(players)
                 players.forEach(p => this.players.find(_p => p.id === _p.id)!.status = p.status);
@@ -52,6 +47,12 @@ export default class LobbyPageComponent {
         this.socket.subscribeOn(OpCode.GameStart)
             .pipe(takeUntil(this.unsubscribe))
             .subscribe(() => this.router.navigateByUrl('/game'));
+
+        if (this.isHost) {
+            await this.createMatch();
+        } else {
+            await this.joinMatch(match_id)
+        }
     }
 
     ngOnDestroy() {
