@@ -51,16 +51,30 @@ export default class SettingsPageComponent {
     }
   }
   save(data?:any) {
-    this.nakama.updateAccount(this.session.session!, {
-      display_name : this.username,
-      avatar_url: this.fileName || data.path,
-      username: this.username
-    }).then(() => {
-      this.message = 'Настройки успешно сохранены';
-    }).catch(response=>{
-      if(response.status === 400) {
-        this.error = 'произошла ошибка';
-      }
-    });
+    if (data.path) {
+      this.nakama.updateAccount(this.session.session!, {
+        display_name : this.username,
+        avatar_url: data.path,
+        username: this.username
+      }).then(() => {
+        this.message = 'Настройки успешно сохранены';
+      }).catch(response=>{
+        if(response.status === 400) {
+          this.error = 'произошла ошибка';
+        }
+      });
+    } else {
+      this.nakama.updateAccount(this.session.session!, {
+        display_name : this.username,
+        username: this.username
+      }).then(() => {
+        this.message = 'Настройки успешно сохранены';
+      }).catch(response=>{
+        if(response.status === 400) {
+          this.error = 'произошла ошибка';
+        }
+      });
+    }
+
   }
 }
