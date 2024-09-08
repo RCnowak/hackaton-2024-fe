@@ -8,6 +8,7 @@ import { Game } from "./models/game/game";
 import { Level } from "./models/level/level";
 import { Scene } from "./models/scene/scene";
 import { v4 as uuidv4 } from "uuid";
+import { AbbilityCode } from './utils/abillityCodes';
 
 
 @Component({
@@ -82,5 +83,20 @@ export class GameComponent {
     const level: LevelEnum[][] = Level.generate();
     this.socket.dispatchGameEvent({ action: "set_scene", payload: level });
     this.game.createCurrentPlayer(level);
+  }
+
+  atack(event: MouseEvent) {
+    event.stopPropagation();
+    this.socket.dispatchGameEvent({ action: "apply_ability", payload: {userId: this.game._currentPlayer.id, abillityCode: AbbilityCode.attack} });
+  }
+
+  heal(event: MouseEvent) {
+    event.stopPropagation();
+    this.socket.dispatchGameEvent({ action: "apply_ability", payload: {userId: this.game._currentPlayer.id, abillityCode: AbbilityCode.heal} });
+  }
+
+  destroy(event: MouseEvent) {
+    event.stopPropagation();
+    this.socket.dispatchGameEvent({ action: "apply_ability", payload: {userId: this.game._currentPlayer.id, abillityCode: AbbilityCode.destroy} });
   }
 }

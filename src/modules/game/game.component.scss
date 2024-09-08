@@ -11,9 +11,26 @@
 
 .buttons {
   position: fixed;
-  bottom: 50px;
-  right: 0;
-  button {
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  
+  img, .action {
     user-select: none;
+  }
+  .actions {
+    position: absolute;
+    bottom: 12px;
+    width: 530px;
+    display: flex;
+    gap: 40px;
+    .action {
+      width: 150px;
+      height: 150px;
+      &:hover {
+        border: green 8px solid;
+      }
+    }
   }
 }
