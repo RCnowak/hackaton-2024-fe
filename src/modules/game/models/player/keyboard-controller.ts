@@ -14,6 +14,9 @@ const keyMap: Map<string, Direction> = new Map([
 ]);
 
 const isVoiceCommand = (key: string) => ['f', 'а'].includes(key.toLocaleLowerCase());
+const isSpeedAbility = (key: string) => 'shift' === key.toLocaleLowerCase();
+const isHealAbility = (key: string) => ['q', 'й'].includes(key.toLocaleLowerCase());
+const isDestroyAbility = (key: string) => ['e', 'у'].includes(key.toLocaleLowerCase());
 
 export class KeyboardController extends AbstractController {
   private readonly actionStart$ = fromEvent<MouseEvent>(document, "mousedown").pipe(map(() => true));
@@ -42,6 +45,9 @@ export class KeyboardController extends AbstractController {
   override action$ = merge(this.actionStart$, this.actionEnd$).pipe(share())
   override voiceCommand$ = this.initVoiceCommand();
   override moveDirection$ = this.initMoveDirection();
+  speed$ = fromEvent<KeyboardEvent>(document, 'keydown').pipe(filter(event => isSpeedAbility(event.key)));
+  heal$ = fromEvent<KeyboardEvent>(document, 'keydown').pipe(filter(event => isHealAbility(event.key)));
+  destroy$ = fromEvent<KeyboardEvent>(document, 'keydown').pipe(filter(event => isDestroyAbility(event.key)));
 
   public readonly mousemove$: Observable<IPoint> = fromEvent<MouseEvent>(document, "mousemove").pipe(
     map((event: MouseEvent): IPoint => ({ x: event.clientX, y: event.clientY })),
