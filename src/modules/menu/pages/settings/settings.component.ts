@@ -1,9 +1,10 @@
 import {Component, inject} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {FormsModule} from "@angular/forms";
-
+import {SocketService} from "@game/services/socket.service";
 import {NAKAMA} from "@api/nakama";
+import {Match} from "@heroiclabs/nakama-js";
 import {SessionService} from "@auth/services/session.service";
+import {FormsModule} from "@angular/forms";
 
 
 @Component({
@@ -17,13 +18,21 @@ import {SessionService} from "@auth/services/session.service";
 })
 export default class SettingsPageComponent {
   fileName = '';
+  private socket = inject(SocketService);
   private nakama = inject(NAKAMA);
   private session = inject(SessionService);
   private http = inject(HttpClient);
-  
+
 
   username: string = '';
 
+  async ngOnInit() {
+    const account = await this.nakama.getAccount(this.session.session!);
+    const user = account.user;
+    console.log('accout',user);
+    this.username = user?.username||'';
+    this.fileName = user?.avatar_url||'';
+  }
   onFileSelected(event:any) {
     // this.socket.socket!.
 
@@ -34,10 +43,10 @@ export default class SettingsPageComponent {
       this.fileName = 'Выбран: '+file.name;
 
       const formData = new FormData();
-      
+
       formData.append("thumbnail", file);
-      
-      this.http.post("/api/thumbnail-upload", formData)
+
+      this.http.post("/upload/", formData)
         .subscribe(data => this.save());
     }
   }
