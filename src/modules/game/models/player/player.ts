@@ -33,7 +33,7 @@ export class Player extends BaseModel implements ISceneObject {
   private _lastAttackAt: number = Date.now();
   private _lastUpdatedAnimationAt: number = Date.now();
   private _currentFrame: number = 0;
-  private _maxHealthPoint = BASE_HEALTH_POINT;
+   _maxHealthPoint = BASE_HEALTH_POINT;
   public healthPoint = BASE_HEALTH_POINT;
   public power = BASE_POWER;
 

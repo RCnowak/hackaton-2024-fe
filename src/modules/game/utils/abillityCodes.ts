@@ -8,4 +8,4 @@ export const abillityMap = new Map([
     [AbbilityCode.attack, 'атака'],
     [AbbilityCode.heal, 'исцеление'],
     [AbbilityCode.destroy, 'апокалипсис'],
-])
+]);

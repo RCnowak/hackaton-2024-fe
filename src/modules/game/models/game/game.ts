@@ -20,6 +20,7 @@ import { v4 as uuidv4 } from "uuid";
 import { KeyboardController } from "../player/keyboard-controller";
 import { Arrow } from "../player/arrow";
 import { Wall } from "../scene/models/wall";
+import { AbbilityCode } from '@game/utils/abillityCodes';
 
 export class Game extends BaseModel {
   _currentPlayer!: Player;
@@ -127,7 +128,14 @@ export class Game extends BaseModel {
             this._currentPlayer.levelUp();
             this._spawners.forEach((spawner: Spawner) => spawner.levelUp());
             this._activeSpawners.delete(message.payload);
-        }
+            break;
+          case "apply_ability":
+            if (message.payload.abillityCode === AbbilityCode.destroy) {
+              this._enemies.clear();
+            } else if (message.payload.abillityCode === AbbilityCode.heal) {
+              this._currentPlayer.healthPoint = Math.min(this._currentPlayer._maxHealthPoint, this._currentPlayer.healthPoint + 30)
+            }
+        };
       })
     ).subscribe();
   }
