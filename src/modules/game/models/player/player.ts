@@ -20,6 +20,7 @@ import {
 import { KeyboardController } from "./keyboard-controller";
 import { tap } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
+import { AbbilityCode } from '@game/utils/abillityCodes';
 
 export class Player extends BaseModel implements ISceneObject {
   public override size: ISize = { width: 128, height: 128 };
@@ -87,6 +88,27 @@ export class Player extends BaseModel implements ISceneObject {
         this.socket.dispatchGameEvent({
           action: "apply_ability",
           payload: { userId: this.id, abillityCode: command.type }
+        });
+      });
+    this._controller.speed$
+      .subscribe(() => {
+        this.socket.dispatchGameEvent({
+          action: "apply_ability",
+          payload: {userId: this.id, abillityCode: AbbilityCode.speed}
+        });
+      });
+    this._controller.heal$
+      .subscribe(() => {
+        this.socket.dispatchGameEvent({
+          action: "apply_ability",
+          payload: {userId: this.id, abillityCode: AbbilityCode.heal}
+        });
+      });
+    this._controller.destroy$
+      .subscribe(() => {
+        this.socket.dispatchGameEvent({
+          action: "apply_ability",
+          payload: {userId: this.id, abillityCode: AbbilityCode.destroy}
         });
       });
   }
