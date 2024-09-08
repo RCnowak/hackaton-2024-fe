@@ -1,2 +1,7 @@
-<button (click)="logout()">Logout</button>
+<div class="buttons">
+    @if (router.url !== '/main') {
+        <button (click)="back()">Назад</button>
+    }
+    <button (click)="logout()">Выход</button>
+</div>
 <router-outlet></router-outlet>
