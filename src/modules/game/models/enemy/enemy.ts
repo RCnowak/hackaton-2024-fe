@@ -8,50 +8,59 @@ import {
   getDirection,
   IPoint,
   ISceneObject,
-  ISize,
-  LevelEnum, TIME_TO_UPDATE_PATH
+  LevelEnum,
+  MONSTER_BASE_HEALTH_POINT,
+  MONSTER_BASE_POWER,
+  MONSTER_BASE_SPEED,
+  TIME_TO_UPDATE_PATH,
+  MONSTER_COOLDOWN_ATTACK, MONSTER_ANIMATION_ATTACK, MONSTER_HEALTH_MULTIPLY, MONSTER_POWER_MULTIPLY
 } from "../../utils";
 import { Player } from "../player/player";
 import { BaseModel } from "../base/base-model";
 import { Injector } from "@angular/core";
 
 const enemies = [
+  "small spider.png",
   "big spider.png",
-  // "brown werewolf.png",
-  // "brown werewolf in various.png",
   "fire ant.png",
-  // "goblin bow.png",
+  "brown werewolf.png",
+  "skeleton.png",
+  "goblin bow.png",
+
+  // "brown werewolf in various.png",
   // "goblin elite.png",
   // "goblin peak.png",
   // "orc sword shield.png",
   // "orc with an ax.png",
-  // "skeleton.png",
-  "small spider.png",
   // "white werewolf.png",
   // "white werewolf in various.png",
   // "wyvern.png"
 ];
 
 export class Enemy extends BaseModel implements ISceneObject {
-  public override size: ISize = { width: 128, height: 128 };
+  public healthPoint: number = MONSTER_BASE_HEALTH_POINT;
+  public power: number = MONSTER_BASE_POWER;
+  private _cooldownAttack: number = MONSTER_COOLDOWN_ATTACK;
 
   private readonly _level: LevelEnum[][] = [];
   private readonly _target!: Player;
-  private _speed: number = 2;
+  private _speed: number = MONSTER_BASE_SPEED;
+  private _attack: boolean = false;
   private _path: IPoint[];
   private _lastUpdatedDirectionAt: number = 0;
   private _lastUpdatedAnimationAt: number = Date.now();
-  public _imageSize: ISize = { width: 128, height: 128 };
+  private _lastAttackAt: number = Date.now();
+
 
   constructor(injector: Injector, id: string, position: IPoint, target: Player, level: LevelEnum[][]) {
     super(injector, id);
     this.position = { ...position };
     this._target = target;
-    const model = Math.floor(Math.random() * enemies.length);
-
-    this.sprite.src = `/images/enemies/${ enemies[model] }`;
+    this.sprite.src = `/images/enemies/${ enemies[target.currentLevel] }`;
     this._level = level;
     this._path = createPath(this, this._target, this._level);
+    this.healthPoint = MONSTER_BASE_HEALTH_POINT * this._target.currentLevel * MONSTER_HEALTH_MULTIPLY;
+    this.power = MONSTER_BASE_POWER * this._target.currentLevel * MONSTER_POWER_MULTIPLY;
   }
 
   public override render(): void {
@@ -72,10 +81,10 @@ export class Enemy extends BaseModel implements ISceneObject {
 
     this.context.drawImage(
       this.sprite,
-      this._imageSize.width * (this.shiftFrame.x % 12),
-      this.shiftFrame.y * this._imageSize.height,
-      this._imageSize.width,
-      this._imageSize.height,
+      this.shiftX(),
+      this.shiftFrame.y * this.imageSize.height,
+      this.imageSize.width,
+      this.imageSize.height,
       this._target.offset.x + (this.position.x * this.size.width),
       this._target.offset.y + (this.position.y * this.size.height),
       this.size.width,
@@ -83,11 +92,17 @@ export class Enemy extends BaseModel implements ISceneObject {
   }
 
   public override update(deltaTime: number): void {
+    const currentTime = Date.now();
     const updatedPosition: IPoint = this.updatePosition(deltaTime);
-    if (Date.now() - this._lastUpdatedDirectionAt > TIME_TO_UPDATE_PATH) {
+    if (currentTime - this._lastUpdatedDirectionAt > TIME_TO_UPDATE_PATH) {
       this._path = createPath(this, this._target, this._level);
       this._lastUpdatedDirectionAt = Date.now();
     }
+
+    if (this._attack && (currentTime - this._lastAttackAt < MONSTER_ANIMATION_ATTACK)) {
+      this._attack = false;
+    }
+
     this.position = updatedPosition;
     this.animation();
   }
@@ -140,5 +155,22 @@ export class Enemy extends BaseModel implements ISceneObject {
     this.shiftFrame.y = getDirection(this.direction);
     this.shiftFrame.x++;
     this._lastUpdatedAnimationAt = Date.now();
+  }
+
+  private shiftX(): number {
+    const shiftX: number = this.shiftFrame.x % 8;
+    if (this._attack) {
+      return this.imageSize.width * (shiftX + 24);
+    } else {
+      return this.imageSize.width * (shiftX + 4);
+    }
+  }
+
+  public attack(): void {
+    const currentTime: number = Date.now();
+    if (this._attack || (currentTime - this._lastAttackAt < this._cooldownAttack)) return;
+    this._target.healthPoint -= this.power;
+    this._lastAttackAt = currentTime;
+    this._attack = true;
   }
 }

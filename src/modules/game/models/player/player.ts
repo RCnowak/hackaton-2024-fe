@@ -1,17 +1,17 @@
 import { BaseModel } from "../base/base-model";
 import { Injector } from "@angular/core";
 import {
-  ANIMATION_FRAME_RATE,
+  ANIMATION_FRAME_RATE, BASE_HEALTH_POINT, BASE_POWER, BASE_SPEED,
   BLOCK_SIZE,
   calculateOffset,
   checkHorizontalDirection,
-  checkVerticalDirection,
+  checkVerticalDirection, COOLDOWN_ATTACK,
   getDirection,
-  getRoundedDirection,
+  getRoundedDirection, HEALTH_MULTIPLY,
   IPoint,
   ISceneObject,
   ISize,
-  LevelEnum
+  LevelEnum, POWER_MULTIPLY
 } from "../../utils";
 import { KeyboardController } from "./keyboard-controller";
 import { tap } from "rxjs";
@@ -30,11 +30,15 @@ export class Player extends BaseModel implements ISceneObject {
   private _lastAttackAt: number = Date.now();
   private _lastUpdatedAnimationAt: number = Date.now();
   private _currentFrame: number = 0;
+  private _maxHealthPoint = BASE_HEALTH_POINT;
+  public healthPoint = BASE_HEALTH_POINT;
+  public power = BASE_POWER;
 
   // Настройки персонажа
-  private _speed: number = 2;
-  private _cooldownAttack: number = 300;
+  private _speed: number = BASE_SPEED;
+  private _cooldownAttack: number = COOLDOWN_ATTACK;
   public override shiftFrame: IPoint = { x: 0, y: 0 };
+  public currentLevel = 1;
 
   get offset(): IPoint {
     return this._offset;
@@ -85,6 +89,10 @@ export class Player extends BaseModel implements ISceneObject {
   }
 
   public override update(deltaTime: number): void {
+    if (this.healthPoint <= 0) {
+      this.socket.on({ action: "player_death", payload: this });
+      return;
+    }
     const updatedPosition: IPoint = this.updatePosition(deltaTime);
     this.position = updatedPosition;
     this._offset = calculateOffset(updatedPosition, this._offset, {
@@ -107,6 +115,21 @@ export class Player extends BaseModel implements ISceneObject {
       this.offset.y + (this.position.y * BLOCK_SIZE),
       this.size.width,
       this.size.height);
+
+    this.context.strokeRect(
+      this.offset.x + (this.position.x * BLOCK_SIZE) + 48,
+      this.offset.y + (this.position.y * BLOCK_SIZE) + 32,
+      32,
+      8);
+
+    this.context.save();
+    this.context.fillStyle = "red";
+    this.context.fillRect(
+      this.offset.x + (this.position.x * BLOCK_SIZE) + 48,
+      this.offset.y + (this.position.y * BLOCK_SIZE) + 32,
+      this.healthPoint * 32 / this._maxHealthPoint,
+      8);
+    this.context.restore();
   }
 
   private shiftX(): number {
@@ -178,5 +201,13 @@ export class Player extends BaseModel implements ISceneObject {
     this.shiftFrame.x++;
     this._currentFrame++;
     this._lastUpdatedAnimationAt = Date.now();
+  }
+
+  public levelUp(): void {
+    this.currentLevel++;
+    this.power *= POWER_MULTIPLY;
+    const addedHealth: number = this._maxHealthPoint * HEALTH_MULTIPLY;
+    this.healthPoint += addedHealth - this._maxHealthPoint;
+    this._maxHealthPoint = addedHealth;
   }
 }

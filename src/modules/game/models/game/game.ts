@@ -2,7 +2,7 @@ import { Injector } from "@angular/core";
 import { BaseModel } from "../base/base-model";
 import { Scene } from "../scene/scene";
 import { Player } from "../player/player";
-import { interval, map, tap } from "rxjs";
+import { map, tap } from "rxjs";
 import {
   BLOCK_SIZE,
   detectCollision,
@@ -31,6 +31,9 @@ export class Game extends BaseModel {
   private _enemies: Map<string, Enemy> = new Map();
   private _sceneObjects: Map<string, BaseModel> = new Map();
   private _spawners: Map<string, Spawner> = new Map();
+  private _gameOver: boolean = false;
+  private _lastEnemyCreatedAt: number = Date.now();
+
 
   constructor(injector: Injector, id: string) {
     super(injector, id);
@@ -38,18 +41,18 @@ export class Game extends BaseModel {
   }
 
   override init(): void {
-    interval(TIME_TO_BORN_ENEMY)
-      .pipe(tap(() => {
-        this._enemiesWaiting++;
-      }))
-      .subscribe();
-
     const update = (deltaTime: number): void => {
+      const currentTime = Date.now();
+      if (currentTime - this._lastEnemyCreatedAt > TIME_TO_BORN_ENEMY) {
+        this._enemiesWaiting++;
+      }
       this._players.forEach((player: Player) => player.update(deltaTime));
-      this._enemies.forEach((enemy: Enemy) => enemy.update(deltaTime));
+      this._enemies.forEach((enemy: Enemy) => this.detectCollisionEnemy(enemy, deltaTime));
       this._arrows.forEach((arrow: Arrow) => this.detectCollisionArrow(arrow, deltaTime));
       this._activeSpawners.forEach(this.createEnemy.bind(this));
+      this._spawners.forEach((spawner: Spawner) => spawner.update());
     };
+
     const render = (): void => {
       if (!this._scene) return;
       this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -63,6 +66,7 @@ export class Game extends BaseModel {
     this.delta$.pipe(
       map((deltaTime: number) => deltaTime),
       tap((deltaTime: number): void => {
+          if (this._gameOver) return;
           update(deltaTime);
           render();
         }
@@ -78,6 +82,14 @@ export class Game extends BaseModel {
           case "player_attack":
             this._arrows.set(message.payload.id, message.payload);
             break;
+          case "player_death":
+            this._gameOver = true;
+            break;
+          case "attack_enemy":
+            if (message.payload.healthPoint <= 0) {
+              this._enemies.delete(message.payload.id);
+            }
+            break;
           case "add_enemy":
             this._enemies.set(message.payload.id, message.payload);
             break;
@@ -91,9 +103,9 @@ export class Game extends BaseModel {
             this._scene = message.payload;
             this._sceneObjects = message.payload.sceneObjects;
             break;
-          case "attack_spawner":
-            const spawner: Spawner = message.payload;
-            spawner.active = false;
+          case "death_spawner":
+            this._currentPlayer.levelUp();
+            this._spawners.forEach((spawner: Spawner) => spawner.levelUp());
             this._activeSpawners.delete(message.payload.id);
             break;
         }
@@ -135,7 +147,7 @@ export class Game extends BaseModel {
   }
 
   private detectCollisionArrow(arrow: Arrow, deltaTime: number): void {
-    const detectHit: BaseModel | undefined = Array.from(this._sceneObjects.values())
+    let detectHit: BaseModel | undefined = Array.from(this._sceneObjects.values())
       .filter((object: BaseModel) => object instanceof Wall)
       .find((value: BaseModel): boolean => detectCollision({
         position: { x: arrow.position.x * BLOCK_SIZE, y: arrow.position.y * BLOCK_SIZE },
@@ -145,38 +157,72 @@ export class Game extends BaseModel {
         size: value.size
       }));
 
-    const attackSpawner: Spawner | undefined = Array.from(this._activeSpawners.values())
-      .find((enemy: Spawner) => detectCollision({
-        position: { x: arrow.position.x * BLOCK_SIZE, y: arrow.position.y * BLOCK_SIZE },
-        size: arrow.size
-      }, {
-        position: { x: enemy.position.x * BLOCK_SIZE, y: enemy.position.y * BLOCK_SIZE },
-        size: enemy.size
-      }));
+    this._activeSpawners
+      .forEach((spawner: Spawner) => {
+        if (detectCollision({
+          position: { x: arrow.position.x * BLOCK_SIZE, y: arrow.position.y * BLOCK_SIZE },
+          size: arrow.size
+        }, {
+          position: { x: spawner.position.x * BLOCK_SIZE, y: spawner.position.y * BLOCK_SIZE },
+          size: spawner.size
+        })) {
+          detectHit = spawner;
+          spawner.healthPoint -= this._currentPlayer.power;
+          this.socket.on({ action: "attack_spawner", payload: spawner });
+        }
+      });
 
+    this._enemies
+      .forEach((enemy: Enemy) => {
+        if (detectCollision({
+          position: { x: arrow.position.x * BLOCK_SIZE, y: arrow.position.y * BLOCK_SIZE },
+          size: arrow.size
+        }, {
+          position: {
+            x: enemy.position.x * BLOCK_SIZE + 32,
+            y: enemy.position.y * BLOCK_SIZE + 32
+          },
+          size: {
+            width: enemy.size.width - 64,
+            height: enemy.size.height - 64
+          }
+        })) {
+          enemy.healthPoint -= arrow.player.power;
+          if (enemy.healthPoint <= 0) {
+            this.socket.on({ action: "attack_enemy", payload: enemy });
+          }
+          detectHit = enemy;
+        }
+      });
 
-    const killEnemy: Enemy | undefined = Array.from(this._enemies.values())
-      .find((enemy: Enemy) => detectCollision({
-        position: { x: arrow.position.x * BLOCK_SIZE, y: arrow.position.y * BLOCK_SIZE },
-        size: arrow.size
-      }, {
-        position: { x: enemy.position.x * BLOCK_SIZE, y: enemy.position.y * BLOCK_SIZE },
-        size: enemy.size
-      }));
-
-    if (killEnemy) {
-      this.socket.on({ action: "kill_enemy", payload: killEnemy });
-    }
-
-    if (attackSpawner) {
-      this.socket.on({ action: "attack_spawner", payload: attackSpawner });
-    }
-
-    if (detectHit || killEnemy || attackSpawner) {
+    if (detectHit) {
       this.socket.on({ action: "cancel_attack", payload: arrow });
       return;
     }
 
     arrow.update(deltaTime);
+  }
+
+  private detectCollisionEnemy(enemy: Enemy, deltaTime: number) {
+    if (detectCollision({
+      position: {
+        x: this._currentPlayer.position.x * BLOCK_SIZE + 32,
+        y: this._currentPlayer.position.y * BLOCK_SIZE + 32
+      },
+      size: {
+        width: this._currentPlayer.size.width - 64,
+        height: this._currentPlayer.size.height - 64
+      }
+    }, {
+      position: { x: enemy.position.x * BLOCK_SIZE + 32, y: enemy.position.y * BLOCK_SIZE + 32 },
+      size: {
+        width: enemy.size.width - 64,
+        height: enemy.size.height - 64
+      }
+    })) {
+      enemy.attack();
+    }
+
+    enemy.update(deltaTime);
   }
 }

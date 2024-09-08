@@ -7,7 +7,7 @@ export class Arrow extends BaseModel implements ISceneObject {
   public override size: ISize = { width: 8, height: 8 };
 
   private _direction!: IPoint;
-  private _player!: Player;
+  public player!: Player;
   private _speed: number = 8;
   private _maxDistance: number = 1.5;
   private _currentDistance: number = 0;
@@ -16,13 +16,13 @@ export class Arrow extends BaseModel implements ISceneObject {
     super(injector, id);
     this.position = { ...position };
     this._direction = direction;
-    this._player = player;
+    this.player = player;
   }
 
   public override render(): void {
     this.context.fillRect(
-      this._player.offset.x + (this.position.x * BLOCK_SIZE),
-      this._player.offset.y + (this.position.y * BLOCK_SIZE),
+      this.player.offset.x + (this.position.x * BLOCK_SIZE),
+      this.player.offset.y + (this.position.y * BLOCK_SIZE),
       this.size.width,
       this.size.height);
   }
