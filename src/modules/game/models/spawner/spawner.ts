@@ -42,7 +42,7 @@ export class Spawner extends BaseModel implements ISceneObject {
     if (this.healthPoint <= 0) {
       this._active = false;
       this.shiftFrame.y = this.size.height;
-      this.socket.on({ action: "death_spawner", payload: this });
+      this.socket.dispatchGameEvent({ action: "death_spawner", payload: this.id });
     }
   }
 

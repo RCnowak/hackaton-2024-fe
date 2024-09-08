@@ -125,7 +125,7 @@ export class Game extends BaseModel {
           case "death_spawner":
             this._currentPlayer.levelUp();
             this._spawners.forEach((spawner: Spawner) => spawner.levelUp());
-            this._activeSpawners.delete(message.payload.id);
+            this._activeSpawners.delete(message.payload);
         }
       })
     ).subscribe();
@@ -187,7 +187,7 @@ export class Game extends BaseModel {
         })) {
           detectHit = spawner;
           spawner.healthPoint -= this._currentPlayer.power;
-          this.socket.dispatchGameEvent({ action: "attack_spawner", payload: spawner });
+          this.socket.dispatchGameEvent({ action: "attack_spawner", payload: spawner.id });
         }
       });
 
@@ -208,14 +208,14 @@ export class Game extends BaseModel {
         })) {
           enemy.healthPoint -= arrow.player.power;
           if (enemy.healthPoint <= 0) {
-            this.socket.dispatchGameEvent({ action: "attack_enemy", payload: enemy });
+            this.socket.dispatchGameEvent({ action: "attack_enemy", payload: {id: enemy.id, healthPoint: enemy.healthPoint} });
           }
           detectHit = enemy;
         }
       });
 
     if (detectHit) {
-      this.socket.dispatchGameEvent({ action: "cancel_attack", payload: arrow });
+      this.socket.dispatchGameEvent({ action: "cancel_attack", payload: arrow.id });
       return;
     }
 

@@ -89,7 +89,7 @@ export class Player extends BaseModel implements ISceneObject {
 
   public override update(deltaTime: number): void {
     if (this.healthPoint <= 0) {
-      this.socket.on({ action: "player_death", payload: this });
+      this.socket.dispatchGameEvent({ action: "player_death", payload: this.id });
       return;
     }
     const updatedPosition: IPoint = this.updatePosition(deltaTime);
