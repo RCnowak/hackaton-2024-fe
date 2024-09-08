@@ -1,4 +1,4 @@
-import { IPoint, LevelEnum } from "../../../utils";
+import { IPoint, LevelEnum } from "@game/utils";
 import { SceneObject } from "../../base/scene-object";
 
 export class Ladder extends SceneObject {

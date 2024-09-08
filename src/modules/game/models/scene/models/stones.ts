@@ -1,4 +1,4 @@
-import { IPoint } from "../../../utils";
+import { IPoint } from "@game/utils";
 import { SceneObject } from "../../base/scene-object";
 
 export class Stones extends SceneObject {

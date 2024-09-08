@@ -1,5 +1,5 @@
 import { IPoint } from '@game/utils';
-import { distinctUntilChanged, map, merge, NEVER, Observable, share, Subject } from 'rxjs';
+import { distinctUntilChanged, map,  NEVER, Observable, share, Subject } from 'rxjs';
 
 export enum Direction {
     Up = 1,
@@ -77,7 +77,6 @@ export abstract class AbstractController {
             });
 
         recognition.onresult = function (event: any) {
-            console.log(event);
             result.next({
                 type: 'command',
                 text: event.results[0][0].transcript

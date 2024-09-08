@@ -1,18 +1,22 @@
 import { BaseModel } from "../base/base-model";
 import { Injector } from "@angular/core";
 import {
-  ANIMATION_FRAME_RATE, BASE_HEALTH_POINT, BASE_POWER, BASE_SPEED,
+  ANIMATION_FRAME_RATE,
+  BASE_HEALTH_POINT,
+  BASE_POWER, BASE_SPEED,
   BLOCK_SIZE,
   calculateOffset,
   checkHorizontalDirection,
-  checkVerticalDirection, COOLDOWN_ATTACK,
+  checkVerticalDirection,
+  COOLDOWN_ATTACK,
   getDirection,
-  getRoundedDirection, HEALTH_MULTIPLY,
+  getRoundedDirection,
+  HEALTH_MULTIPLY,
   IPoint,
   ISceneObject,
   ISize,
   LevelEnum, POWER_MULTIPLY
-} from "../../utils";
+} from "@game/utils";
 import { KeyboardController } from "./keyboard-controller";
 import { tap } from "rxjs";
 import { v4 as uuidv4 } from "uuid";

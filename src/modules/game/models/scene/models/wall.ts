@@ -1,4 +1,4 @@
-import { IPoint, ISize, LevelEnum } from "../../../utils";
+import { IPoint, ISize, LevelEnum } from "@game/utils";
 import { SceneObject } from "../../base/scene-object";
 
 const shiftWall: LevelEnum[] = [

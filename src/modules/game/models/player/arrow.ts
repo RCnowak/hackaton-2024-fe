@@ -1,4 +1,4 @@
-import { BLOCK_SIZE, IPoint, ISceneObject, ISize } from "../../utils";
+import { BLOCK_SIZE, IPoint, ISceneObject, ISize } from "@game/utils";
 import { BaseModel } from "../base/base-model";
 import { Injector } from "@angular/core";
 import { Player } from "./player";

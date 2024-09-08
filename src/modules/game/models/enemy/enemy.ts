@@ -13,8 +13,10 @@ import {
   MONSTER_BASE_POWER,
   MONSTER_BASE_SPEED,
   TIME_TO_UPDATE_PATH,
-  MONSTER_COOLDOWN_ATTACK, MONSTER_ANIMATION_ATTACK, MONSTER_HEALTH_MULTIPLY, MONSTER_POWER_MULTIPLY
-} from "../../utils";
+  MONSTER_COOLDOWN_ATTACK, MONSTER_ANIMATION_ATTACK,
+  MONSTER_HEALTH_MULTIPLY,
+  MONSTER_POWER_MULTIPLY
+} from "@game/utils";
 import { Player } from "../player/player";
 import { BaseModel } from "../base/base-model";
 import { Injector } from "@angular/core";

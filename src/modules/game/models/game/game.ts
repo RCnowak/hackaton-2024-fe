@@ -11,7 +11,7 @@ import {
   LevelEnum,
   SPAWNER_COUNT,
   TIME_TO_BORN_ENEMY
-} from "../../utils";
+} from "@game/utils";
 
 import { Spawner } from "../spawner/spawner";
 import { Enemy } from "../enemy/enemy";
@@ -109,7 +109,7 @@ export class Game extends BaseModel {
               this._players.get(message.payload.playerId)!,
               message.payload.scenelevel
             );
-            this._enemies.set(message.payload.id, enemy);
+            this._enemies.set(message.payload.uid, enemy);
             break;
           case "cancel_attack":
             this._arrows.delete(message.payload);

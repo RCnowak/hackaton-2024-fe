@@ -5,8 +5,11 @@ import {
   LevelEnum,
   ISceneObject,
   LEVEL_ELEMENT_COUNT,
-  SPAWNER_COUNT, MIN_WIDTH, MIN_HEIGHT, COUNT_STONE
-} from "../../utils";
+  SPAWNER_COUNT,
+  MIN_WIDTH,
+  MIN_HEIGHT,
+  COUNT_STONE
+} from "@game/utils";
 
 export class Level {
   public static generate(): LevelEnum[][] {
@@ -21,6 +24,10 @@ export class Level {
           row.push(LevelEnum.WALL_NORTH_WEST);
         } else if (mapX === LEVEL_ELEMENT_COUNT - 1 && mapY === 0) {
           row.push(LevelEnum.WALL_NORTH_EAST);
+        } else if (mapX === LEVEL_ELEMENT_COUNT - 1 && mapY === LEVEL_ELEMENT_COUNT - 1) {
+          row.push(LevelEnum.WALL_SOUTH_EAST);
+        } else if (mapX === 0 && mapY === LEVEL_ELEMENT_COUNT - 1) {
+          row.push(LevelEnum.WALL_SOUTH_WEST);
         } else if (mapY === 0) {
           row.push(LevelEnum.WALL_NORTH);
         } else if (mapY === LEVEL_ELEMENT_COUNT - 1) {

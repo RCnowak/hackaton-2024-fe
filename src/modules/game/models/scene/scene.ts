@@ -7,7 +7,7 @@ import { Wall } from "./models/wall";
 import { SceneObject } from "../base/scene-object";
 import { v4 as uuidv4 } from "uuid";
 import { map, take, tap, timer } from "rxjs";
-import { LEVEL_SIZE, IPoint, LevelEnum } from "../../utils";
+import { LEVEL_SIZE, IPoint, LevelEnum } from "@game/utils";
 import { Player } from "../player/player";
 
 export class Scene extends BaseModel {

@@ -1,4 +1,4 @@
-import { IPoint, ISize, ISceneObject } from "../../utils";
+import { IPoint, ISize, ISceneObject } from "@game/utils";
 
 export class SceneObject implements ISceneObject {
   public position: IPoint = { x: 0, y: 0 };

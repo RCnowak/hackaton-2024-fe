@@ -1,12 +1,12 @@
 import {
-  BASE_HEALTH_POINT, BASE_POWER,
   BLOCK_SIZE,
-  detectCollision, HEALTH_MULTIPLY,
+  detectCollision,
   IPoint,
   ISceneObject,
-  ISize, POWER_MULTIPLY,
+  ISize,
   SPAWNER_BASE_HEALTH_POINT,
-  SPAWNER_COUNT, SPAWNER_HEALTH_MULTIPLY,
+  SPAWNER_COUNT,
+  SPAWNER_HEALTH_MULTIPLY,
 } from "../../utils";
 import { BaseModel } from "../base/base-model";
 import { Player } from "../player/player";
@@ -72,6 +72,7 @@ export class Spawner extends BaseModel implements ISceneObject {
       this.size.width,
       this.size.height);
 
+    if (!this._active) return;
     this.context.strokeRect(
       this._player.offset.x + (this.position.x * BLOCK_SIZE) + 32,
       this._player.offset.y + (this.position.y * BLOCK_SIZE),

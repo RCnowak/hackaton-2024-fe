@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { Injector } from "@angular/core";
-import { CANVAS, CONTEXT, DELTA_TIME, IPoint, ISize } from "../../utils";
+import { CANVAS, CONTEXT, DELTA_TIME, IPoint, ISize } from "@game/utils";
 import { SocketService } from "../../services/socket.service";
 
 export abstract class BaseModel {

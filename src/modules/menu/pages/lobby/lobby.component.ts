@@ -41,7 +41,6 @@ export default class LobbyPageComponent {
             .pipe(takeUntil(this.unsubscribe))
             .subscribe((matchData: any) => {
                 const players = matchData.data as Player[];
-                console.log(players)
                 players.forEach(p => this.players.find(_p => p.id === _p.id)!.status = p.status);
             });
         this.socket.subscribeOn(OpCode.GameStart)
