@@ -22,7 +22,9 @@
       <button color="primary" class="upload-btn"
               (click)="fileUpload.click()">Загрузить аватар
       </button>
-      <div ngIf="fileName" class="img-center m-t-20"><img class="avatar" width="200" src="{{ fileName }}"/></div>
+      @if (fileName) {
+        <div class="img-center m-t-20"><img class="avatar" width="200" src="{{ fileName }}"/></div>
+      }
     </div>
   </div>
 </div>
