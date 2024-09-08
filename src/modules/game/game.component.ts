@@ -113,7 +113,7 @@ export class GameComponent {
   }
 
   public disableButton(): boolean {
-    return Date.now() - this.game._currentPlayer.lastUseAbbilityAt < COOLDOWN_ABBILITY;
+    return Date.now() - this.game?._currentPlayer?.lastUseAbbilityAt < COOLDOWN_ABBILITY;
   }
 
   protected readonly Date = Date;
