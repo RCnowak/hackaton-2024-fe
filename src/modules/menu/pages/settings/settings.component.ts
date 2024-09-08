@@ -22,7 +22,8 @@ export default class SettingsPageComponent {
   private nakama = inject(NAKAMA);
   private session = inject(SessionService);
   private http = inject(HttpClient);
-
+  message: string = '';
+  error: string = '';
 
   username: string = '';
 
@@ -39,7 +40,7 @@ export default class SettingsPageComponent {
 
     if (file) {
 
-      this.fileName = 'Выбран: '+file.name;
+      this.fileName = file.name;
 
       const formData = new FormData();
 
@@ -52,8 +53,14 @@ export default class SettingsPageComponent {
   save(data?:any) {
     this.nakama.updateAccount(this.session.session!, {
       display_name : this.username,
-      avatar_url: data.path,
+      avatar_url: this.fileName || data.path,
       username: this.username
+    }).then(() => {
+      this.message = 'Настройки успешно сохранены';
+    }).catch(response=>{
+      if(response.status === 400) {
+        this.error = 'произошла ошибка';
+      }
     });
   }
 }
