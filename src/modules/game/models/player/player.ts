@@ -91,7 +91,7 @@ export class Player extends BaseModel implements ISceneObject {
       width: this.canvas.width / 2,
       height: this.canvas.height / 2
     });
-    this.socket.on({ action: "update_position", payload: this });
+    this.socket.dispatchGameEvent({ action: "update_position", payload: this });
     this.attack();
     this.animation();
   }
@@ -168,7 +168,7 @@ export class Player extends BaseModel implements ISceneObject {
     };
 
     const arrow: Arrow = new Arrow(this.injector, uid, position, direction, this);
-    this.socket.on({ action: "player_attack", payload: arrow });
+    this.socket.dispatchGameEvent({ action: "player_attack", payload: arrow });
     this._lastAttackAt = currentTime;
   }
 

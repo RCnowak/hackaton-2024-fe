@@ -120,7 +120,7 @@ export class Game extends BaseModel {
       const uid: string = uuidv4();
       const enemy: Enemy = new Enemy(this.injector, uid, spawner.position, this._currentPlayer, this._scene.level);
       this._enemiesWaiting--;
-      this.socket.on({ action: "add_enemy", payload: enemy });
+      this.socket.dispatchGameEvent({ action: "add_enemy", payload: enemy });
     }
   }
 
@@ -131,7 +131,7 @@ export class Game extends BaseModel {
     player.controller = new KeyboardController();
     this._currentPlayer = player;
     this._scene.player = player;
-    this.socket.on({ action: "add_player", payload: player });
+    this.socket.dispatchGameEvent({ action: "add_player", payload: player });
   }
 
   private detectCollisionArrow(arrow: Arrow, deltaTime: number): void {
@@ -165,15 +165,15 @@ export class Game extends BaseModel {
       }));
 
     if (killEnemy) {
-      this.socket.on({ action: "kill_enemy", payload: killEnemy });
+      this.socket.dispatchGameEvent({ action: "kill_enemy", payload: killEnemy });
     }
 
     if (attackSpawner) {
-      this.socket.on({ action: "attack_spawner", payload: attackSpawner });
+      this.socket.dispatchGameEvent({ action: "attack_spawner", payload: attackSpawner });
     }
 
     if (detectHit || killEnemy || attackSpawner) {
-      this.socket.on({ action: "cancel_attack", payload: arrow });
+      this.socket.dispatchGameEvent({ action: "cancel_attack", payload: arrow });
       return;
     }
 

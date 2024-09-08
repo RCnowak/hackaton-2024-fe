@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { Injector } from "@angular/core";
-import { CANVAS, CONTEXT, DELTA_TIME, IPoint, ISize, SOCKET } from "../../utils";
+import { CANVAS, CONTEXT, DELTA_TIME, IPoint, ISize } from "../../utils";
 import { SocketService } from "../../services/socket.service";
 
 export abstract class BaseModel {
@@ -24,7 +24,7 @@ export abstract class BaseModel {
     this.delta$ = injector.get(DELTA_TIME);
     this.context = injector.get(CONTEXT);
     this.canvas = injector.get(CANVAS);
-    this.socket = injector.get(SOCKET);
+    this.socket = injector.get(SocketService);
     this.id = id;
   }
 

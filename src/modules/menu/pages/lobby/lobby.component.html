@@ -1,5 +1,6 @@
 <div class="wrapper">
     <h1>Лобби</h1>
+    <h3>({{ socket.match?.match_id }})</h3>
     <div class="players">
         @for (player of players; track player.id) {
             <p class="player" [class.ready]="player.status === 'ready'">{{ player.username }}</p>
@@ -8,7 +9,7 @@
 </div>
 <div class="buttons">
     @if (isHost) {
-        <button (click)="start()" disabled>Начать игру</button>
+        <button (click)="start()">Начать игру</button>
     }
     @if (currentStatus === 'notready') {
         <button (click)="markAs('ready')">Я готов играть</button>
