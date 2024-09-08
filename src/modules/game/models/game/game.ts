@@ -4,7 +4,9 @@ import { Scene } from "../scene/scene";
 import { Player } from "../player/player";
 import { map, tap } from "rxjs";
 import {
-  BLOCK_SIZE, COOLDOWN_ABBILITY,
+  BASE_SPEED,
+  BLOCK_SIZE,
+  COOLDOWN_ABBILITY,
   detectCollision,
   IMessage,
   IPoint,
@@ -130,16 +132,20 @@ export class Game extends BaseModel {
             this._activeSpawners.delete(message.payload);
             break;
           case "apply_ability":
+            const currentTime = Date.now();
+            if (currentTime - this._currentPlayer.lastUseAbbilityAt < COOLDOWN_ABBILITY) return;
+
             if (message.payload.abillityCode === AbbilityCode.destroy) {
-              const currentTime = Date.now();
-              if (currentTime - this._currentPlayer.lastUseAbbilityAt < COOLDOWN_ABBILITY) return;
               this._enemies.clear();
               this._currentPlayer.lastUseAbbilityAt = currentTime;
             } else if (message.payload.abillityCode === AbbilityCode.heal) {
-              const currentTime = Date.now();
-              if (currentTime - this._currentPlayer.lastUseAbbilityAt < COOLDOWN_ABBILITY) return;
               this._currentPlayer.healthPoint = Math.min(this._currentPlayer.maxHealthPoint, this._currentPlayer.healthPoint + 30);
               this._currentPlayer.lastUseAbbilityAt = currentTime;
+            } else if (message.payload.abillityCode === AbbilityCode.speed
+            ) {
+              this._currentPlayer.lastUseAbbilityAt = currentTime;
+              this._currentPlayer._speed = this._currentPlayer._speed * 2;
+              setTimeout(() => this._currentPlayer._speed = BASE_SPEED, 2_000);
             }
         }
       })

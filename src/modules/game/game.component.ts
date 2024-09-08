@@ -88,10 +88,7 @@ export class GameComponent {
 
   atack(event: MouseEvent) {
     event.stopPropagation();
-    this.socket.dispatchGameEvent({
-      action: "apply_ability",
-      payload: { userId: this.game._currentPlayer.id, abillityCode: AbbilityCode.attack }
-    });
+    this.socket.dispatchGameEvent({ action: "apply_ability", payload: {userId: this.game._currentPlayer.id, abillityCode: AbbilityCode.speed} });
   }
 
   heal(event: MouseEvent) {

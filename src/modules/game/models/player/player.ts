@@ -36,8 +36,7 @@ export class Player extends BaseModel implements ISceneObject {
   public healthPoint = BASE_HEALTH_POINT;
   public power = BASE_POWER;
   // Настройки персонажа
-
-  private _speed: number = BASE_SPEED;
+  public _speed: number = BASE_SPEED;
   private _cooldownAttack: number = COOLDOWN_ATTACK;
   public maxHealthPoint = BASE_HEALTH_POINT;
   public override shiftFrame: IPoint = { x: 0, y: 0 };
