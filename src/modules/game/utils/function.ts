@@ -11,9 +11,9 @@ export function deltaTime(): Observable<number> {
   return new Observable<number>((observer) => {
     let previousTime = animationFrameScheduler.now();
 
-    function tick() {
-      const currentTime = animationFrameScheduler.now();
-      const deltaTime = currentTime - previousTime;
+    function tick(): void {
+      const currentTime: number = animationFrameScheduler.now();
+      const deltaTime: number = currentTime - previousTime;
       previousTime = currentTime;
 
       observer.next(deltaTime);

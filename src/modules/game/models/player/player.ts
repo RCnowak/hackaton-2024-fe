@@ -20,9 +20,8 @@ import { v4 as uuidv4 } from "uuid";
 
 export class Player extends BaseModel implements ISceneObject {
   public override size: ISize = { width: 128, height: 128 };
+  public level: LevelEnum[][] = [];
 
-  private readonly _level: LevelEnum[][] = [];
-  private _imageSize: ISize = { width: 128, height: 128 };
   private _mousePosition: IPoint = { x: 0, y: 0 };
   private _offset: IPoint = { x: 0, y: 0 };
   private _controller!: KeyboardController;
@@ -35,8 +34,7 @@ export class Player extends BaseModel implements ISceneObject {
   // Настройки персонажа
   private _speed: number = 2;
   private _cooldownAttack: number = 300;
-  public override _shiftFrame: IPoint = { x: 0, y: 0 };
-  private text: IPoint = { x: 0, y: 0 };
+  public override shiftFrame: IPoint = { x: 0, y: 0 };
 
   get offset(): IPoint {
     return this._offset;
@@ -71,10 +69,10 @@ export class Player extends BaseModel implements ISceneObject {
         this._mousePosition = mouseDirection;
       })
     ).subscribe();
-    this._controller.mouseClick$.pipe(
+    this._controller.action$.pipe(
       tap((attack: boolean) => this._attack = attack)
     ).subscribe();
-    this._controller.keyboardClick$().pipe(
+    this._controller.moveDirection$.pipe(
       tap((direction: IPoint) => this.direction = direction)
     ).subscribe();
   }
@@ -82,7 +80,7 @@ export class Player extends BaseModel implements ISceneObject {
   constructor(injector: Injector, id: string, position: IPoint, level: LevelEnum[][]) {
     super(injector, id);
     this.position = position;
-    this._level = level;
+    this.level = level;
     this.sprite.src = `/images/archer.png`;
   }
 
@@ -102,9 +100,9 @@ export class Player extends BaseModel implements ISceneObject {
     this.context.drawImage(
       this.sprite,
       this.shiftX(),
-      this._shiftFrame.y * this._imageSize.height,
-      this._imageSize.width,
-      this._imageSize.height,
+      this.shiftFrame.y * this.imageSize.height,
+      this.imageSize.width,
+      this.imageSize.height,
       this.offset.x + (this.position.x * BLOCK_SIZE),
       this.offset.y + (this.position.y * BLOCK_SIZE),
       this.size.width,
@@ -112,13 +110,13 @@ export class Player extends BaseModel implements ISceneObject {
   }
 
   private shiftX(): number {
-    const shiftX: number = this._shiftFrame.x % 8;
+    const shiftX: number = this.shiftFrame.x % 8;
     if (this._attack) {
-      return this._imageSize.width * (shiftX + 24);
+      return this.imageSize.width * (shiftX + 24);
     } else if (this.direction.x === 0 && this.direction.y === 0) {
-      return this._imageSize.width * (shiftX % 4);
+      return this.imageSize.width * (shiftX % 4);
     } else {
-      return this._imageSize.width * (shiftX + 4);
+      return this.imageSize.width * (shiftX + 4);
     }
   }
 
@@ -128,10 +126,9 @@ export class Player extends BaseModel implements ISceneObject {
       y: this.position.y + this.direction.y * this._speed * deltaTime
     };
 
-    this.text = newPosition;
     const blockedDirections: { x: boolean; y: boolean } = {
-      x: checkHorizontalDirection(newPosition, this, this._level),
-      y: checkVerticalDirection(newPosition, this, this._level)
+      x: checkHorizontalDirection(newPosition, this, this.level),
+      y: checkVerticalDirection(newPosition, this, this.level)
     };
 
     return {
@@ -177,8 +174,8 @@ export class Player extends BaseModel implements ISceneObject {
 
   private animation() {
     if (Date.now() - this._lastUpdatedAnimationAt < ANIMATION_FRAME_RATE) return;
-    this._shiftFrame.y = getDirection(this._faceDirection);
-    this._shiftFrame.x++;
+    this.shiftFrame.y = getDirection(this._faceDirection);
+    this.shiftFrame.x++;
     this._currentFrame++;
     this._lastUpdatedAnimationAt = Date.now();
   }

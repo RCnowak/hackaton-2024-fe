@@ -5,7 +5,7 @@ import {
   LevelEnum,
   ISceneObject,
   LEVEL_ELEMENT_COUNT,
-  SPAWNER_COUNT
+  SPAWNER_COUNT, MIN_WIDTH, MIN_HEIGHT, COUNT_STONE
 } from "../../utils";
 
 export class Level {
@@ -77,7 +77,7 @@ export class Level {
       currentRoom++;
     }
 
-    for ( let i = 0; i < 265; i++ ) {
+    for ( let i = 0; i < COUNT_STONE; i++ ) {
       const stone = this.getEmptyPosition(map);
       this.setMapObject(map, stone, LevelEnum.STONES);
     }
@@ -85,9 +85,6 @@ export class Level {
   }
 
   private static createRoom(rooms: ISceneObject[]): ISceneObject {
-    const MIN_WIDTH: number = Math.floor(LEVEL_ELEMENT_COUNT / SPAWNER_COUNT);
-    const MIN_HEIGHT: number = Math.floor(LEVEL_ELEMENT_COUNT / SPAWNER_COUNT);
-
     let x: number = 0;
     let y: number = 0;
     let height: number = 0;
@@ -99,8 +96,6 @@ export class Level {
       width = Math.ceil(Math.random() * LEVEL_ELEMENT_COUNT) + MIN_WIDTH;
       height = Math.ceil(Math.random() * LEVEL_ELEMENT_COUNT) + MIN_HEIGHT;
       area = height * width;
-
-      console.log(area);
     } while (
       area > 100 || this.onEdge(x, y, width, height) ||
       rooms.some((r) => detectCollision(

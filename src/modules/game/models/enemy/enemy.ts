@@ -9,7 +9,7 @@ import {
   IPoint,
   ISceneObject,
   ISize,
-  LevelEnum
+  LevelEnum, TIME_TO_UPDATE_PATH
 } from "../../utils";
 import { Player } from "../player/player";
 import { BaseModel } from "../base/base-model";
@@ -42,7 +42,6 @@ export class Enemy extends BaseModel implements ISceneObject {
   private _lastUpdatedDirectionAt: number = 0;
   private _lastUpdatedAnimationAt: number = Date.now();
   public _imageSize: ISize = { width: 128, height: 128 };
-  public override _shiftFrame: IPoint = { x: 0, y: 0 };
 
   constructor(injector: Injector, id: string, position: IPoint, target: Player, level: LevelEnum[][]) {
     super(injector, id);
@@ -56,10 +55,11 @@ export class Enemy extends BaseModel implements ISceneObject {
   }
 
   public override render(): void {
+    if (!this.context) return;
     this.context.drawImage(
       this.sprite,
-      this._imageSize.width * (this._shiftFrame.x % 12),
-      this._shiftFrame.y * this._imageSize.height,
+      this._imageSize.width * (this.shiftFrame.x % 12),
+      this.shiftFrame.y * this._imageSize.height,
       this._imageSize.width,
       this._imageSize.height,
       this._target.offset.x + (this.position.x * BLOCK_SIZE),
@@ -70,7 +70,7 @@ export class Enemy extends BaseModel implements ISceneObject {
 
   public override update(deltaTime: number): void {
     const updatedPosition: IPoint = this.updatePosition(deltaTime);
-    if (Date.now() - this._lastUpdatedDirectionAt > 100) {
+    if (Date.now() - this._lastUpdatedDirectionAt > TIME_TO_UPDATE_PATH) {
       this._path = createPath(this, this._target, this._level);
       this._lastUpdatedDirectionAt = Date.now();
     }
@@ -123,8 +123,8 @@ export class Enemy extends BaseModel implements ISceneObject {
 
   private animation(): void {
     if (Date.now() - this._lastUpdatedAnimationAt < ANIMATION_FRAME_RATE) return;
-    this._shiftFrame.y = getDirection(this.direction);
-    this._shiftFrame.x++;
+    this.shiftFrame.y = getDirection(this.direction);
+    this.shiftFrame.x++;
     this._lastUpdatedAnimationAt = Date.now();
   }
 }

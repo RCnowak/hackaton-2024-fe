@@ -1,11 +1,9 @@
 import { Injector } from "@angular/core";
 import { BaseModel } from "../base/base-model";
-import { Empty } from "./models/empty";
 import { Ground } from "./models/ground";
 import { Stones } from "./models/stones";
 import { Ladder } from "./models/ladder";
 import { Wall } from "./models/wall";
-import { Spawner } from "../spawner/spawner";
 import { SceneObject } from "../base/scene-object";
 import { v4 as uuidv4 } from "uuid";
 import { map, take, tap, timer } from "rxjs";
@@ -48,9 +46,6 @@ export class Scene extends BaseModel {
         const position: IPoint = { x: mapX, y: mapY };
         const value: LevelEnum = this.level[mapX][mapY];
         switch ( value ) {
-          case LevelEnum.EMPTY:
-            this._sceneObjects.set(uid, new Empty(uid, position));
-            break;
           case LevelEnum.GROUND:
             this._sceneObjects.set(uid, new Ground(uid, position));
             break;
@@ -63,9 +58,6 @@ export class Scene extends BaseModel {
           case LevelEnum.LADDER_RIGHT:
             this._sceneObjects.set(uid, new Ladder(uid, position, value));
             break;
-          case LevelEnum.SPAWNER:
-            this._sceneObjects.set(uid, new Spawner(uid, position));
-            break;
           case LevelEnum.WALL_NORTH:
           case LevelEnum.WALL_SOUTH:
           case LevelEnum.WALL_EAST:
@@ -76,8 +68,6 @@ export class Scene extends BaseModel {
           case LevelEnum.WALL_SOUTH_WEST:
             this._sceneObjects.set(uid, new Wall(uid, position, value));
             break;
-          default:
-            this._sceneObjects.set(uid, new Empty(uid, position));
         }
       }
     }

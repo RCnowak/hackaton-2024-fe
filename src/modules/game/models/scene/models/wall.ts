@@ -19,6 +19,6 @@ export class Wall extends SceneObject {
     super(id, position);
     this.position = position;
     this.sprite.src = `/images/wall.png`;
-    this._shiftFrame.x = shiftWall.indexOf(direction);
+    this.shiftFrame.x = shiftWall.indexOf(direction);
   }
 }

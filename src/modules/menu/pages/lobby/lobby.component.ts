@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OpCode, Player, PlayerStatus, SocketService } from '@game/services/socket.service';
 import { MatchPresenceEvent, User } from '@heroiclabs/nakama-js';
-import { merge } from 'rxjs';
+import { merge, Subject, takeUntil } from 'rxjs';
 
 @Component({
     templateUrl: './lobby.component.html',
@@ -18,6 +18,8 @@ export default class LobbyPageComponent {
 
     isHost: boolean = this.route.queryParams['match_id'];
     currentStatus: PlayerStatus = 'notready';
+
+    private unsubscribe = new Subject<void>();
 
     async ngOnInit() {
         const match_id =  this.route.queryParams['match_id'];
@@ -40,17 +42,27 @@ export default class LobbyPageComponent {
             this.socket.subscribeOn(OpCode.ReadyStatus),
             this.socket.subscribeOn(OpCode.ReadyStatusChange),
         )
+            .pipe(takeUntil(this.unsubscribe))
             .subscribe((matchData: any) => {
                 console.log(matchData)
                 const players = matchData.data as Player[];
                 console.log(players)
                 players.forEach(p => this.players.find(_p => p.id === _p.id)!.status = p.status);
             });
+        this.socket.subscribeOn(OpCode.GameStart)
+            .pipe(takeUntil(this.unsubscribe))
+            .subscribe(() => this.router.navigateByUrl('/game'));
+    }
+
+    ngOnDestroy() {
+        this.unsubscribe.next();
+        this.unsubscribe.complete();
     }
 
     private async createMatch() {
         await this.socket.createMatch(this.user.username!);
         this.socket.subscribeOn(OpCode.ReadyStatusRequest)
+            .pipe(takeUntil(this.unsubscribe))
                 .subscribe(() => {
                     this.socket.sendMatchData(OpCode.ReadyStatus, this.players);
                 })
@@ -72,7 +84,8 @@ export default class LobbyPageComponent {
     }
 
     start() {
-        // this.socket.socket?.sendMatchState()
+        this.socket.sendMatchData(OpCode.GameStart, {});
+        this.router.navigateByUrl('/game');
     }
 
     leave() {
