@@ -13,8 +13,8 @@ import { Player } from "../player/player";
 import { Injector } from "@angular/core";
 
 export class Spawner extends BaseModel implements ISceneObject {
-  public override shiftFrame: IPoint = { x: 0, y: 0 };
   override size: ISize = { width: 128, height: 128 };
+  public override shiftFrame: IPoint = { x: 0, y: this.size.height };
   public healthPoint: number = SPAWNER_BASE_HEALTH_POINT;
 
   private _maxHealthPoint: number = SPAWNER_BASE_HEALTH_POINT;
@@ -41,7 +41,7 @@ export class Spawner extends BaseModel implements ISceneObject {
     if (!this._active) return;
     if (this.healthPoint <= 0) {
       this._active = false;
-      this.shiftFrame.y = this.size.height;
+      this.shiftFrame.y = 0;
       this.socket.dispatchGameEvent({ action: "death_spawner", payload: this.id });
     }
   }
@@ -75,7 +75,7 @@ export class Spawner extends BaseModel implements ISceneObject {
     if (!this._active) return;
     this.context.strokeRect(
       this._player.offset.x + (this.position.x * BLOCK_SIZE) + 32,
-      this._player.offset.y + (this.position.y * BLOCK_SIZE),
+      this._player.offset.y + (this.position.y * BLOCK_SIZE) - 32,
       this.size.width / 2,
       8);
 
@@ -83,7 +83,7 @@ export class Spawner extends BaseModel implements ISceneObject {
     this.context.fillStyle = "red";
     this.context.fillRect(
       this._player.offset.x + (this.position.x * BLOCK_SIZE) + 32,
-      this._player.offset.y + (this.position.y * BLOCK_SIZE),
+      this._player.offset.y + (this.position.y * BLOCK_SIZE) - 32,
       this.healthPoint * this.size.width / this._maxHealthPoint / 2,
       8);
     this.context.restore();
